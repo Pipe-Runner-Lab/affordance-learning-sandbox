@@ -1,0 +1,12 @@
+black @ file:///opt/conda/conda-bld/black_1660237809219/work
+certifi @ file:///croot/certifi_1671487769961/work/certifi
+click @ file:///tmp/build/80754af9/click_1646056706450/work
+mkl-fft==1.3.1
+mkl-random @ file:///home/builder/ci_310/mkl_random_1641843545607/work
+mkl-service==2.4.0
+mypy-extensions==0.4.3
+numpy @ file:///croot/numpy_and_numpy_base_1672336185480/work
+pathspec @ file:///croot/pathspec_1674681560568/work
+platformdirs @ file:///opt/conda/conda-bld/platformdirs_1662711380096/work
+six @ file:///tmp/build/80754af9/six_1644875935023/work
+tomli @ file:///opt/conda/conda-bld/tomli_1657175507142/work
