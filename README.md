@@ -36,5 +36,5 @@ The project uses the OmniIsaacGymEnvs package to train RL algorithms using Isaac
 # ⏯️ Starting the Simulation
 The project has to be run from the root of the project.
 ```bash
-python ./src/main.py
+python -m src.mirage task=""
 ```
