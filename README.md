@@ -7,7 +7,7 @@
   - [🌿 Conda](#-conda)
     - [🐍 Python](#-python)
     - [📦 Dependencies](#-dependencies)
-  - [📂 Adding Omniverse Dependencies](#-adding-omniverse-dependencies)
+  - [📂 VS Code](#-vs-code)
   - [🔼 OmniIsaacGymEnvs](#-omniisaacgymenvs)
 - [⏯️ Starting the Simulation](#️-starting-the-simulation)
 - [📝 FAQ](#-faq)
@@ -50,9 +50,8 @@ The project dependencies can be installed by running the following command from 
 conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 ```
 
-## 📂 Adding Omniverse Dependencies
-`OMNIVERSE_PATH`
-TBD
+## 📂 VS Code
+`.vscode/settings.json` contains the settings for VS Code. The settings file is used to setup the python interpreter and additional packages provided by isaac sim for intellisense. There are a few caveats right now on Windows for the environment variables to be picked up by VS Code. I have hardcoded the value to the value of `ISAAC_HOME` for now.
 
 ## 🔼 OmniIsaacGymEnvs
 The project uses the OmniIsaacGymEnvs package to train RL algorithms using Isaac sim as an environment. The package can be installed by following the instructions on the [OmniIsaacGymEnvs GitHub page](https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs).
