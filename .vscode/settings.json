@@ -19,6 +19,7 @@
 
   // Those paths are automatically filled by build system, see `repo.toml` for configuration:
   "python.analysis.extraPaths": [
+    "${workspaceFolder}/src",
     "D:/Tools/Omniverse/pkg/isaac_sim-2022.2.1/exts/omni.isaac.app.selector",
     "D:/Tools/Omniverse/pkg/isaac_sim-2022.2.1/exts/omni.isaac.app.setup",
     "D:/Tools/Omniverse/pkg/isaac_sim-2022.2.1/exts/omni.isaac.articulation_inspector",
@@ -609,8 +610,12 @@
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
   "cSpell.words": [
+    "franka",
+    "frankas",
+    "lfingers",
     "omegaconf",
     "omniisaacgymenvs",
+    "rfingers",
     "rlgames",
     "RLGPU",
     "tensorboard",

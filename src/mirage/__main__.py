@@ -8,7 +8,7 @@ from omniisaacgymenvs.utils.rlgames.rlgames_utils import (
     RLGPUEnv,
 )
 
-# from omniisaacgymenvs.utils.task_util import initialize_task
+from mirage.utils.task_utils import initialize_task
 from omniisaacgymenvs.utils.config_utils.path_utils import (
     retrieve_checkpoint_path,
 )
@@ -105,7 +105,7 @@ def parse_hydra_configs(cfg: DictConfig):
     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
     cfg_dict["seed"] = cfg.seed
 
-    # task = initialize_task(cfg_dict, env)
+    task = initialize_task(cfg_dict, env)  # noqa: F841
     # TODO: Create custom task
 
     if cfg.wandb_activate:
@@ -128,11 +128,11 @@ def parse_hydra_configs(cfg: DictConfig):
     rlg_trainer.launch_rlg_hydra(env)
     rlg_trainer.run()
 
-    # --------------------------------- CLEAN UP --------------------------------- #
+    # * INFO: Clean up
     env.close()
     if cfg.wandb_activate:
         wandb.finish()
 
 
 if __name__ == "__main__":
-    parse_hydra_configs()
+    parse_hydra_configs()  # pylint: disable=no-value-for-parameter

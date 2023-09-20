@@ -3,9 +3,6 @@ from omni.isaac.core.utils.prims import get_prim_at_path
 from omni.isaac.core.objects import DynamicCuboid
 from omniisaacgymenvs.robots.articulations.franka import Franka
 from omniisaacgymenvs.robots.articulations.views.franka_view import FrankaView
-from omniisaacgymenvs.robots.articulations.views.cabinet_view import (
-    CabinetView,
-)
 from omni.isaac.core.prims import RigidPrimView
 import numpy as np
 import torch
@@ -29,17 +26,24 @@ class FrankaBlockTask(RLTask):
         RLTask.__init__(self, name, env)
 
     def set_up_scene(self, scene, replicate_physics=True) -> None:
+        # set default camera viewport position and target
+        self.set_initial_camera_params()
+
+        # add default ground plane
+        scene.add_default_ground_plane()
+
         self.get_franka()
         if self.num_props > 0:
             self.get_props()
 
-        super().set_up_scene(scene)
+        """
+            * INFO: Must be called after all objects are added to the scene
+            * and before getting articulation views
+        """
+        super().set_up_scene(scene, replicate_physics)
 
         self._frankas = FrankaView(
             prim_paths_expr="/World/envs/.*/franka", name="franka_view"
-        )
-        self._cabinets = CabinetView(
-            prim_paths_expr="/World/envs/.*/cabinet", name="cabinet_view"
         )
 
         scene.add(self._frankas)

@@ -1,19 +1,22 @@
-def initialize_task(config, env, init_sim=True):
-    from .config_utils.sim_config import SimConfig
-    sim_config = SimConfig(config)
+from typing import Dict
+from mirage.tasks.franka_block_task import FrankaBlockTask
+from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig
+from omniisaacgymenvs.envs.vec_env_rlgames import VecEnvRLGames
 
-    from mirage.tasks.simple_task import FrankaCabinetTask
-    
-    # Mappings from strings to environments
-    task_map = {
-        "FrankaCabinet": FrankaCabinetTask,
-    }
+
+def initialize_task(cfg_dict: Dict, env: VecEnvRLGames, init_sim: bool = True):
+    sim_config = SimConfig(cfg_dict)
 
     cfg = sim_config.config
-    task = task_map[cfg["task_name"]](
+    task = FrankaBlockTask(
         name=cfg["task_name"], sim_config=sim_config, env=env
     )
 
-    env.set_task(task=task, sim_params=sim_config.get_physics_params(), backend="torch", init_sim=init_sim)
+    env.set_task(
+        task=task,
+        sim_params=sim_config.get_physics_params(),
+        backend="torch",
+        init_sim=init_sim,
+    )
 
     return task
