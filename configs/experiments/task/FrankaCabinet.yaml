@@ -3,7 +3,7 @@ name: FrankaCabinet
 
 physics_engine: ${..physics_engine}
 
-# if given, will override the device setting in gym. 
+# if given, will override the device setting in gym.
 env:
   numEnvs: ${resolve_default:4096,${...num_envs}}
   envSpacing: 3.0
@@ -18,7 +18,6 @@ env:
   startPositionNoise: 0.0
   startRotationNoise: 0.0
 
-  numProps: 4
   aggregateMode: 3
 
   actionScale: 7.5
@@ -103,7 +102,7 @@ sim:
     # per-body
     density: -1
     max_depenetration_velocity: 1000.0
-  prop:
+  box:
     # -1 to use default values
     override_usd_defaults: False
     make_kinematic: False

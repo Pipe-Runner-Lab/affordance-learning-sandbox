@@ -1,4 +1,5 @@
 from omni.isaac.gym.vec_env import VecEnvBase
+from stable_baselines3 import PPO
 
 env = VecEnvBase(headless=True)
 
@@ -7,7 +8,6 @@ from ..tasks.cartpol_task import CartpoleTask
 task = CartpoleTask(name="Cartpole")
 env.set_task(task, backend="torch")
 
-from stable_baselines3 import PPO
 
 # create agent from stable baselines
 model = PPO(

@@ -610,15 +610,22 @@
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
   "cSpell.words": [
+    "dtype",
     "franka",
     "frankas",
+    "leftfinger",
+    "lfinger",
     "lfingers",
     "omegaconf",
     "omniisaacgymenvs",
+    "prims",
+    "rfinger",
     "rfingers",
+    "rightfinger",
     "rlgames",
     "RLGPU",
     "tensorboard",
-    "vecenv"
+    "vecenv",
+    "Xformable"
   ]
 }

@@ -17,8 +17,10 @@ from skrl.utils import set_seed
 set_seed(42)
 
 
-# Define the models (stochastic and deterministic models) for the agent using helper mixin.
-# - Policy: takes as input the environment's observation/state and returns an action
+# Define the models (stochastic and deterministic models) for the agent using
+# helper mixin.
+# - Policy: takes as input the environment's observation/state and returns an
+# action
 # - Value: takes the state as input and provides a value to guide the policy
 class Policy(GaussianMixin, Model):
     def __init__(
@@ -76,8 +78,13 @@ class Value(DeterministicMixin, Model):
 headless = True  # set headless to False for rendering
 env = get_env_instance(headless=headless)
 
-from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig
-from reaching_franka_omniverse_isaacgym_env import ReachingFrankaTask, TASK_CFG
+from omniisaacgymenvs.utils.config_utils.sim_config import (  # noqa: E402
+    SimConfig,
+)
+from ..tasks.reaching_franka_task import (  # noqa: E402
+    ReachingFrankaTask,
+    TASK_CFG,
+)
 
 TASK_CFG["headless"] = headless
 TASK_CFG["task"]["env"]["numEnvs"] = 1024
@@ -100,7 +107,8 @@ env = wrap_env(env, "omniverse-isaacgym")
 device = env.device
 
 
-# Instantiate a RandomMemory as rollout buffer (any memory can be used for this)
+# Instantiate a RandomMemory as rollout buffer (any memory
+# can be used for this)
 memory = RandomMemory(memory_size=16, num_envs=env.num_envs, device=device)
 
 
@@ -113,7 +121,8 @@ models_ppo["value"] = Value(env.observation_space, env.action_space, device)
 
 
 # Configure and instantiate the agent.
-# Only modify some of the default configuration, visit its documentation to see all the options
+# Only modify some of the default configuration, visit its documentation to
+# see all the options
 # https://skrl.readthedocs.io/en/latest/modules/skrl.agents.ppo.html#configuration-and-hyperparameters
 cfg_ppo = PPO_DEFAULT_CONFIG.copy()
 cfg_ppo["rollouts"] = 16
@@ -140,7 +149,8 @@ cfg_ppo["state_preprocessor_kwargs"] = {
 }
 cfg_ppo["value_preprocessor"] = RunningStandardScaler
 cfg_ppo["value_preprocessor_kwargs"] = {"size": 1, "device": device}
-# logging to TensorBoard and write checkpoints each 32 and 250 timesteps respectively
+# logging to TensorBoard and write checkpoints each 32 and 250 timesteps
+# respectively
 cfg_ppo["experiment"]["write_interval"] = 32
 cfg_ppo["experiment"]["checkpoint_interval"] = 250
 

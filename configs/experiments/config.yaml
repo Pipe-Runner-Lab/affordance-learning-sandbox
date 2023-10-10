@@ -1,11 +1,10 @@
-
 # Task name - used to pick the class to load
 task_name: ${task.name}
 # experiment name. defaults to name of training config
-experiment: ''
+experiment: ""
 
 # if set to positive integer, overrides the default number of environments
-num_envs: ''
+num_envs: ""
 
 # seed - set to -1 to choose random seed
 seed: 42
@@ -13,18 +12,18 @@ seed: 42
 torch_deterministic: False
 
 # set the maximum number of learning iterations to train for. overrides default per-environment setting
-max_iterations: ''
+max_iterations: ""
 
 ## Device config
-physics_engine: 'physx'
+physics_engine: "physx"
 # whether to use cpu or gpu pipeline
-pipeline: 'gpu'
+pipeline: "gpu"
 # whether to use cpu or gpu physx
-sim_device: 'gpu'
+sim_device: "gpu"
 # used for gpu simulation only - device id for running sim and task if pipeline=gpu
 device_id: 0
 # device to run RL
-rl_device: 'cuda:0'
+rl_device: "cuda:0"
 # multi-GPU training
 multi_gpu: False
 
@@ -36,7 +35,7 @@ solver_type: 1 # 0: pgs, 1: tgs
 # test - if set, run policy in inference mode (requires setting checkpoint to load)
 test: False
 # used to set checkpoint path
-checkpoint: ''
+checkpoint: ""
 
 # disables rendering
 headless: False
@@ -46,14 +45,14 @@ enable_livestream: False
 mt_timeout: 30
 
 wandb_activate: False
-wandb_group: ''
+wandb_group: ""
 wandb_name: ${train.params.config.name}
-wandb_entity: ''
-wandb_project: 'omniisaacgymenvs'
+wandb_entity: ""
+wandb_project: "omniisaacgymenvs"
 
 # set default task and default training config based on task
 defaults:
-  - task: Cartpole
+  - task: FrankaCabinet
   - train: ${task}PPO
   - hydra/job_logging: disabled
 
@@ -62,4 +61,3 @@ hydra:
   output_subdir: null
   run:
     dir: .
-

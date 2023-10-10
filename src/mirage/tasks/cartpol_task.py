@@ -6,7 +6,6 @@ from omni.isaac.core.utils.prims import create_prim
 
 from omni.isaac.core.utils.viewports import set_camera_view
 
-import gym
 from gym import spaces
 import numpy as np
 import torch
@@ -31,9 +30,12 @@ class CartpoleTask(BaseTask):
         self.resets = torch.zeros((self.num_envs, 1))
 
         # set the action and observation space for RL
-        self.action_space = spaces.Box(np.ones(self._num_actions) * -1.0, np.ones(self._num_actions) * 1.0)
+        self.action_space = spaces.Box(
+            np.ones(self._num_actions) * -1.0, np.ones(self._num_actions) * 1.0
+        )
         self.observation_space = spaces.Box(
-            np.ones(self._num_observations) * -np.Inf, np.ones(self._num_observations) * np.Inf
+            np.ones(self._num_observations) * -np.Inf,
+            np.ones(self._num_observations) * np.Inf,
         )
 
         # trigger __init__ of parent class
@@ -44,10 +46,17 @@ class CartpoleTask(BaseTask):
         assets_root_path = get_assets_root_path()
         usd_path = assets_root_path + "/Isaac/Robots/Cartpole/cartpole.usd"
         # add the Cartpole USD to our stage
-        create_prim(prim_path="/World/Cartpole", prim_type="Xform", position=self._cartpole_position)
+        create_prim(
+            prim_path="/World/Cartpole",
+            prim_type="Xform",
+            position=self._cartpole_position,
+        )
         add_reference_to_stage(usd_path, "/World/Cartpole")
-        # create an ArticulationView wrapper for our cartpole - this can be extended towards accessing multiple cartpoles
-        self._cartpoles = ArticulationView(prim_paths_expr="/World/Cartpole*", name="cartpole_view")
+        # create an ArticulationView wrapper for our cartpole - this can be
+        # extended towards accessing multiple cartpoles
+        self._cartpoles = ArticulationView(
+            prim_paths_expr="/World/Cartpole*", name="cartpole_view"
+        )
         # add Cartpole ArticulationView and ground plane to the Scene
         scene.add(self._cartpoles)
         scene.add_default_ground_plane()
@@ -55,14 +64,22 @@ class CartpoleTask(BaseTask):
         # set default camera viewport position and target
         self.set_initial_camera_params()
 
-    def set_initial_camera_params(self, camera_position=[10, 10, 3], camera_target=[0, 0, 0]):
-        set_camera_view(eye=camera_position, target=camera_target, camera_prim_path="/OmniverseKit_Persp")
+    def set_initial_camera_params(
+        self, camera_position=[10, 10, 3], camera_target=[0, 0, 0]
+    ):
+        set_camera_view(
+            eye=camera_position,
+            target=camera_target,
+            camera_prim_path="/OmniverseKit_Persp",
+        )
 
     def post_reset(self):
         self._cart_dof_idx = self._cartpoles.get_dof_index("cartJoint")
         self._pole_dof_idx = self._cartpoles.get_dof_index("poleJoint")
         # randomize all envs
-        indices = torch.arange(self._cartpoles.count, dtype=torch.int64, device=self._device)
+        indices = torch.arange(
+            self._cartpoles.count, dtype=torch.int64, device=self._device
+        )
         self.reset(indices)
 
     def reset(self, env_ids=None):
@@ -71,14 +88,30 @@ class CartpoleTask(BaseTask):
         num_resets = len(env_ids)
 
         # randomize DOF positions
-        dof_pos = torch.zeros((num_resets, self._cartpoles.num_dof), device=self._device)
-        dof_pos[:, self._cart_dof_idx] = 1.0 * (1.0 - 2.0 * torch.rand(num_resets, device=self._device))
-        dof_pos[:, self._pole_dof_idx] = 0.125 * math.pi * (1.0 - 2.0 * torch.rand(num_resets, device=self._device))
+        dof_pos = torch.zeros(
+            (num_resets, self._cartpoles.num_dof), device=self._device
+        )
+        dof_pos[:, self._cart_dof_idx] = 1.0 * (
+            1.0 - 2.0 * torch.rand(num_resets, device=self._device)
+        )
+        dof_pos[:, self._pole_dof_idx] = (
+            0.125
+            * math.pi
+            * (1.0 - 2.0 * torch.rand(num_resets, device=self._device))
+        )
 
         # randomize DOF velocities
-        dof_vel = torch.zeros((num_resets, self._cartpoles.num_dof), device=self._device)
-        dof_vel[:, self._cart_dof_idx] = 0.5 * (1.0 - 2.0 * torch.rand(num_resets, device=self._device))
-        dof_vel[:, self._pole_dof_idx] = 0.25 * math.pi * (1.0 - 2.0 * torch.rand(num_resets, device=self._device))
+        dof_vel = torch.zeros(
+            (num_resets, self._cartpoles.num_dof), device=self._device
+        )
+        dof_vel[:, self._cart_dof_idx] = 0.5 * (
+            1.0 - 2.0 * torch.rand(num_resets, device=self._device)
+        )
+        dof_vel[:, self._pole_dof_idx] = (
+            0.25
+            * math.pi
+            * (1.0 - 2.0 * torch.rand(num_resets, device=self._device))
+        )
 
         # apply resets
         indices = env_ids.to(dtype=torch.int32)
@@ -95,10 +128,16 @@ class CartpoleTask(BaseTask):
 
         actions = torch.tensor(actions)
 
-        forces = torch.zeros((self._cartpoles.count, self._cartpoles.num_dof), dtype=torch.float32, device=self._device)
+        forces = torch.zeros(
+            (self._cartpoles.count, self._cartpoles.num_dof),
+            dtype=torch.float32,
+            device=self._device,
+        )
         forces[:, self._cart_dof_idx] = self._max_push_effort * actions[0]
 
-        indices = torch.arange(self._cartpoles.count, dtype=torch.int32, device=self._device)
+        indices = torch.arange(
+            self._cartpoles.count, dtype=torch.int32, device=self._device
+        )
         self._cartpoles.set_joint_efforts(forces, indices=indices)
 
     def get_observations(self):
@@ -125,11 +164,24 @@ class CartpoleTask(BaseTask):
         pole_vel = self.obs[:, 3]
 
         # compute reward based on angle of pole and cart velocity
-        reward = 1.0 - pole_angle * pole_angle - 0.01 * torch.abs(cart_vel) - 0.005 * torch.abs(pole_vel)
+        reward = (
+            1.0
+            - pole_angle * pole_angle
+            - 0.01 * torch.abs(cart_vel)
+            - 0.005 * torch.abs(pole_vel)
+        )
         # apply a penalty if cart is too far from center
-        reward = torch.where(torch.abs(cart_pos) > self._reset_dist, torch.ones_like(reward) * -2.0, reward)
+        reward = torch.where(
+            torch.abs(cart_pos) > self._reset_dist,
+            torch.ones_like(reward) * -2.0,
+            reward,
+        )
         # apply a penalty if pole is too far from upright
-        reward = torch.where(torch.abs(pole_angle) > np.pi / 2, torch.ones_like(reward) * -2.0, reward)
+        reward = torch.where(
+            torch.abs(pole_angle) > np.pi / 2,
+            torch.ones_like(reward) * -2.0,
+            reward,
+        )
 
         return reward.item()
 
@@ -137,7 +189,8 @@ class CartpoleTask(BaseTask):
         cart_pos = self.obs[:, 0]
         pole_pos = self.obs[:, 2]
 
-        # reset the robot if cart has reached reset_dist or pole is too far from upright
+        # reset the robot if cart has reached reset_dist or pole is too far
+        # from upright
         resets = torch.where(torch.abs(cart_pos) > self._reset_dist, 1, 0)
         resets = torch.where(torch.abs(pole_pos) > math.pi / 2, 1, resets)
         self.resets = resets

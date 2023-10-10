@@ -1,4 +1,6 @@
+# this import also registers important hydra utils
 from omniisaacgymenvs.utils.hydra_cfg.hydra_utils import OmegaConf
+
 from omniisaacgymenvs.utils.hydra_cfg.reformat import (
     omegaconf_to_dict,
     print_dict,
