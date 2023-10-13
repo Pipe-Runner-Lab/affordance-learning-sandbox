@@ -10,37 +10,38 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "env": {
-        "RESOURCE_NAME": "IsaacSim",
-        "CARB_APP_PATH": "${workspaceFolder}/kit",
-        "ISAAC_PATH": "${workspaceFolder}",
-        "EXP_PATH": "${workspaceFolder}/apps",
-        "PYTHONPATH": "${workspaceFolder}/site"
-      },
-      "python": "${workspaceFolder}/kit/python/python.exe"
-    },
-    {
-      "name": "Python: Attach (windows-x86_64/linux-x86_64)",
-      "type": "python",
-      "request": "attach",
-      "port": 3000,
-      "host": "localhost"
-    },
-    {
-      "name": "(windows-x86_64) isaac-sim [release]",
-      "type": "cppvsdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/kit/kit.exe",
-      "args": [
-        "${workspaceFolder}/apps/omni.isaac.sim.kit",
-        "--ext-folder",
-        "${workspaceFolder}/apps"
-      ],
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false,
-      "internalConsoleOptions": "openOnSessionStart"
+      // "env": {
+      //   "RESOURCE_NAME": "IsaacSim",
+      //   "CARB_APP_PATH": "${workspaceFolder}/kit",
+      //   "ISAAC_PATH": "${workspaceFolder}",
+      //   "EXP_PATH": "${workspaceFolder}/apps",
+      //   "PYTHONPATH": "${workspaceFolder}/site"
+      // },
+      "python": "D:/Tools/Anaconda/envs/isaac-sim/python.exe",
+      "preLaunchTask": "${workspaceFolder}\\scripts\\windows\\setup_conda_env.bat"
     }
+    // {
+    //   "name": "Python: Attach (windows-x86_64/linux-x86_64)",
+    //   "type": "python",
+    //   "request": "attach",
+    //   "port": 3000,
+    //   "host": "localhost"
+    // },
+    // {
+    //   "name": "(windows-x86_64) isaac-sim [release]",
+    //   "type": "cppvsdbg",
+    //   "request": "launch",
+    //   "program": "${workspaceFolder}/kit/kit.exe",
+    //   "args": [
+    //     "${workspaceFolder}/apps/omni.isaac.sim.kit",
+    //     "--ext-folder",
+    //     "${workspaceFolder}/apps"
+    //   ],
+    //   "stopAtEntry": false,
+    //   "cwd": "${workspaceFolder}",
+    //   "environment": [],
+    //   "externalConsole": false,
+    //   "internalConsoleOptions": "openOnSessionStart"
+    // }
   ]
 }

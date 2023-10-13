@@ -1,12 +1,13 @@
-from .asset_loader import spawn_robot, spawn_target
-from .utils import get_robot_local_grasp_transforms
-import torch
-import numpy as np
-from omni.isaac.core.utils.stage import get_current_stage
 from omni.isaac.core.utils.extensions import enable_extension
 
 enable_extension("omni.replicator.isaac")  # required by OIGE
+enable_extension("omni.kit.window.viewport")  # required by OIGE
 
+import torch
+import numpy as np
+from omni.isaac.core.utils.stage import get_current_stage
+from .asset_loader import spawn_robot, spawn_target
+from .utils import get_robot_local_grasp_transforms
 from omniisaacgymenvs.tasks.base.rl_task import RLTask  # noqa: E402
 
 
@@ -31,15 +32,16 @@ TASK_CFG = {
         "name": "AffordanceBlockPickPlace",
         "physics_engine": "physx",
         "env": {
-            "numEnvs": 2,
+            "numEnvs": 1024,
             "envSpacing": 3,
-            "episodeLength": 500,  # ! different
+            "episodeLength": 500,  # ! changed to 500
             "enableDebugVis": False,  # VS Code debugger
             "clipObservations": 5.0,  # ! different
             "clipActions": 1.0,
             "controlFrequencyInv": 2,  # ! different : 60 Hz
             "actionScale": 7.5,
             "dofVelocityScale": 0.1,
+            "liftThreshold": 0.3,
             # ! params missing
         },
         "sim": {
@@ -86,7 +88,7 @@ TASK_CFG = {
             },
             "robot": {
                 "override_usd_defaults": False,
-                "fixed_base": False,  # ! Why is this false?
+                "fixed_base": True,  # ! changed to true
                 "enable_self_collisions": False,
                 "enable_gyroscopic_forces": True,
                 "solver_position_iteration_count": 4,  # ! different
@@ -100,14 +102,14 @@ TASK_CFG = {
             },
             "target": {
                 "override_usd_defaults": False,
-                "fixed_base": True,  # ! Why is this true?
+                "fixed_base": False,  # ! changed to false
                 "enable_self_collisions": False,
                 "enable_gyroscopic_forces": True,
                 "solver_position_iteration_count": 4,  # ! different
                 "solver_velocity_iteration_count": 1,
                 "sleep_threshold": 0.005,
                 "stabilization_threshold": 0.001,
-                "density": -1,
+                "density": 100,  # ! changed from -1
                 "max_depenetration_velocity": 1000.0,
                 "contact_offset": 0.005,
                 "rest_offset": 0.0,
@@ -117,7 +119,7 @@ TASK_CFG = {
 }
 
 
-class ReachingFrankaTask(RLTask):
+class AffordanceBlockPickPlaceTask(RLTask):
     def __init__(self, name, sim_config, env, offset=None) -> None:
         self._sim_config = sim_config
         self._cfg = sim_config.config
@@ -130,6 +132,7 @@ class ReachingFrankaTask(RLTask):
         self._action_scale = self._task_cfg["env"]["actionScale"]
         self._dof_vel_scale = self._task_cfg["env"]["dofVelocityScale"]
         self._max_episode_length = self._task_cfg["env"]["episodeLength"]
+        self.lift_threshold = self._task_cfg["env"]["liftThreshold"]
 
         # observation and action space
         self._num_observations = 18  # TODO: Change based on buffer size
@@ -281,13 +284,47 @@ class ReachingFrankaTask(RLTask):
         )
 
         # compute distance for calculate_metrics() and is_done()
-        # TODO: Change 0 to some target position
-        self._computed_distance = torch.norm(0 - target_pos, dim=-1)
+        self.actuator_distance = torch.linalg.vector_norm(
+            hand_pos - target_pos, dim=-1
+        )
+        self.lift_distance = torch.linalg.vector_norm(
+            target_pos[:, 2] - self._env_pos[:, 2], dim=-1
+        )  # y axis
+        self.lfinger_distance = torch.linalg.vector_norm(
+            lfinger_pos - target_pos, dim=-1
+        )
+        self.rfinger_distance = torch.linalg.vector_norm(
+            rfinger_pos - target_pos, dim=-1
+        )
 
         return {self._robots.name: {"obs_buf": self.obs_buf}}
 
     def calculate_metrics(self) -> None:
-        self.rew_buf[:] = -self._computed_distance
+        # reward for gripper close to target
+        dist_reward = torch.pow(1.0 / (1.0 + self.actuator_distance**2), 2)
+        dist_reward = torch.where(
+            self.actuator_distance <= 0.02,
+            dist_reward * 2,
+            dist_reward,
+        )
+
+        # reward for lifting target
+        lift_reward = torch.where(
+            self.lift_distance >= self.lift_threshold, 1, 0
+        )
+
+        # reward for fingers close to target
+        finger_reward = torch.pow(
+            1.0 / (1.0 + self.lfinger_distance + self.rfinger_distance), 2
+        )
+        finger_reward = torch.where(
+            self.lfinger_distance <= 0.02,
+            finger_reward * 2,
+            finger_reward,
+        )
+
+        print("rewards", {dist_reward, lift_reward, finger_reward})
+        self.rew_buf[:] = dist_reward + lift_reward + finger_reward
 
     def is_done(self) -> None:
         # fill with 0
@@ -295,11 +332,11 @@ class ReachingFrankaTask(RLTask):
 
         # TODO: This needs to be adjusted based on task
         # target reached
-        self.reset_buf = torch.where(
-            self._computed_distance <= 0.035,
-            torch.ones_like(self.reset_buf),
-            self.reset_buf,
-        )
+        # self.reset_buf = torch.where(
+        #     self.actuator_distance <= 0.035,
+        #     torch.ones_like(self.reset_buf),
+        #     self.reset_buf,
+        # )
         # max episode length
         self.reset_buf = torch.where(
             self.progress_buf >= self._max_episode_length - 1,
