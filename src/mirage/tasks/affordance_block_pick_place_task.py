@@ -32,7 +32,7 @@ TASK_CFG = {
         "name": "AffordanceBlockPickPlace",
         "physics_engine": "physx",
         "env": {
-            "numEnvs": 1024,
+            "numEnvs": 2,
             "envSpacing": 3,
             "episodeLength": 500,  # ! changed to 500
             "enableDebugVis": False,  # VS Code debugger

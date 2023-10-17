@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export PYTHONPATH=$PYTHONPATH:$ISAAC_HOME/../../../$PYTHONPATH:$ISAAC_HOME/exts/omni.isaac.kit:$ISAAC_HOME/exts/omni.isaac.gym:$ISAAC_HOME/kit/kernel/py:$ISAAC_HOME/kit/plugins/bindings-python:$ISAAC_HOME/kit/extscore/omni.kit.pip_archive/pip_prebundle:$ISAAC_HOME/exts/omni.isaac.core_archive/pip_prebundle:$ISAAC_HOME/exts/omni.isaac.ml_archive/pip_prebundle:$ISAAC_HOME/extscache/omni.pip.torch-1_13_1-0.1.4+104.2.lx64/torch-1-13-1
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ISAAC_HOME/../../../$LD_LIBRARY_PATH:$ISAAC_HOME/.:$ISAAC_HOME/exts/omni.usd.schema.isaac/bin:$ISAAC_HOME/exts/omni.isaac.motion_planning/bin:$ISAAC_HOME/kit:$ISAAC_HOME/kit/kernel/plugins:$ISAAC_HOME/kit/libs/iray:$ISAAC_HOME/kit/plugins:$ISAAC_HOME/kit/plugins/bindings-python:$ISAAC_HOME/kit/plugins/carb_gfx:$ISAAC_HOME/kit/plugins/rtx:$ISAAC_HOME/kit/plugins/gpu.foundation:$ISAAC_HOME/kit/extensions/extensions-bundled/bin

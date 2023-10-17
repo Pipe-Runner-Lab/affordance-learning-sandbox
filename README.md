@@ -2,19 +2,29 @@
 
 - [Project Mirage](#project-mirage)
 - [🧪 Setup](#-setup)
+  - [💻 Device Specifications](#-device-specifications)
   - [🦾 Nvidia Omniverse](#-nvidia-omniverse)
     - [⚛️ Nucleus](#️-nucleus)
   - [🌿 Conda](#-conda)
     - [🐍 Python](#-python)
     - [📦 Dependencies](#-dependencies)
+    - [🔼 Additional Dependencies](#-additional-dependencies)
+      - [🥇 OmniIsaacGymEnvs](#-omniisaacgymenvs)
+      - [🥇 skrl](#-skrl)
   - [📂 VS Code](#-vs-code)
-  - [🔼 OmniIsaacGymEnvs](#-omniisaacgymenvs)
 - [⏯️ Starting the Simulation](#️-starting-the-simulation)
 - [📝 FAQ](#-faq)
 
 # 🧪 Setup
 
 The following steps are required to run the project.
+
+## 💻 Device Specifications
+
+- CPU: 12th Gen Intel i9-12900H (20) @ 4.900GHz
+- GPU: NVIDIA Geforce RTX 3070 Ti Laptop GPU
+- RAM: 32GB
+- OS: Windows 11 Pro / Ubuntu 22.04.3 LTS x86_64
 
 ## 🦾 Nvidia Omniverse
 
@@ -26,12 +36,25 @@ Once installation is done, add the `ISAAC_HOME` path to the environment variable
 <img src="./docs/images/env_vars.png" alt="Environment Variables" width="500"/>
 </center>
 
+On Linux, simply add the following to your `.bashrc` or `.zshrc` file. I have assume default installation path set by Omniverse.
+
+```bash
+export ISAAC_HOME=$HOME/.local/share/ov/pkg/isaac_sim-2022.2.1
+```
+
 **Note:** This is important for the environment setup script uses this variable to complete the rest of the setup.
+
+**Note:** On Ubuntu, if you can't run the AppImage, the following two settings might help:
+
+1. `chmod +x <path-to-appimage>`
+2. `sudo apt install libfuse2`
 
 ### ⚛️ Nucleus
 
-The USD files for Franka robots and a few other models are used from the Nvidia Omniverse Nucleus server. The Nucleus server can be started by running the following command.
-Verify that the Nucleus server is running by navigating to http://localhost:3080 in a web browser.
+The USD files for Franka robots and a few other models are used from the Nvidia Omniverse Nucleus server. The Nucleus server can be started by running the following command. A one time local server credentials creation will be needed when Nucleus is setup for the first time.
+Verify that the Nucleus server is running by navigating to http://localhost:3080 in a web browser.  
+**Note:** If there are any issues with connection, try going to http://localhost:3080/ and restarting all services.  
+**Note:** There is a bug on Linux which prevents setting any other username than `admin` and any other password than `admin`.
 
 ## 🌿 Conda
 
@@ -47,6 +70,22 @@ conda env create -f environment.yml
 conda activate isaac-sim
 ```
 
+We also need to set environment variables that will be used for running the code.
+
+On windows, run the following command:
+
+```cmd
+.\scripts\setup_conda_env.bat
+```
+
+On Linux, run the following command:
+
+```bash
+source ./scripts/setup_conda_env.sh
+```
+
+> This step needs to be done **every time** the environment is activated. Without this, the python scripts won't be able to find any of the Omniverse libraries.
+
 ### 📦 Dependencies
 
 The project dependencies can be installed by running the following command from the root of the project.
@@ -57,13 +96,21 @@ The project dependencies can be installed by running the following command from 
 conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 ```
 
+### 🔼 Additional Dependencies
+
+Other than the dependencies listed in `environment.yml`, the following dependencies are required to run the project. Make sure to install them in the same environment that we created above.
+
+#### 🥇 OmniIsaacGymEnvs
+
+The project uses the OmniIsaacGymEnvs package to create the RL tasks. The package can be installed by following the instructions on the [OmniIsaacGymEnvs GitHub page](https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs).
+
+#### 🥇 skrl
+
+We use skrl to train the RL agents. The package can be installed by following the instructions on the [skrl documentation page](https://skrl.readthedocs.io/en/latest/intro/installation.html#python-package-index-pypi).
+
 ## 📂 VS Code
 
 `.vscode/settings.json` contains the settings for VS Code. The settings file is used to setup the python interpreter and additional packages provided by isaac sim for intellisense. There are a few caveats right now on Windows for the environment variables to be picked up by VS Code. I have hardcoded the value to the value of `ISAAC_HOME` for now.
-
-## 🔼 OmniIsaacGymEnvs
-
-The project uses the OmniIsaacGymEnvs package to train RL algorithms using Isaac sim as an environment. The package can be installed by following the instructions on the [OmniIsaacGymEnvs GitHub page](https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs).
 
 # ⏯️ Starting the Simulation
 

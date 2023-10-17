@@ -75,7 +75,7 @@ class Value(DeterministicMixin, Model):
 
 
 # instance VecEnvBase and setup task
-headless = True  # set headless to False for rendering
+headless = False  # set headless to False for rendering
 env = get_env_instance(headless=headless)
 
 from omniisaacgymenvs.utils.config_utils.sim_config import (  # noqa: E402
