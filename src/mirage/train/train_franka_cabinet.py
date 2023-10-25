@@ -75,24 +75,21 @@ class Value(DeterministicMixin, Model):
 
 
 # instance VecEnvBase and setup task
-headless = True  # set headless to False for rendering
-env = get_env_instance(headless=headless)
+env = get_env_instance(headless=True)
 
 from omniisaacgymenvs.utils.config_utils.sim_config import (  # noqa: E402
     SimConfig,
 )
-from ..tasks.reaching_franka_task import (  # noqa: E402
-    ReachingFrankaTask,
+from ..tasks.franka_cabinet import (  # noqa: E402
+    FrankaCabinetTask,
     TASK_CFG,
 )
 
-TASK_CFG["headless"] = headless
-TASK_CFG["task"]["env"]["numEnvs"] = 1024
 TASK_CFG["task"]["env"]["controlSpace"] = "joint"  # "joint" or "cartesian"
 
 sim_config = SimConfig(TASK_CFG)
-task = ReachingFrankaTask(
-    name="ReachingFranka", sim_config=sim_config, env=env
+task = FrankaCabinetTask(
+    name="AffordanceBlockPickPlace", sim_config=sim_config, env=env
 )
 env.set_task(
     task=task,
@@ -165,7 +162,7 @@ agent = PPO(
 
 
 # Configure and instantiate the RL trainer
-cfg_trainer = {"timesteps": 5000, "headless": True}
+cfg_trainer = {"timesteps": 5000}
 trainer = SequentialTrainer(cfg=cfg_trainer, env=env, agents=agent)
 
 # start training

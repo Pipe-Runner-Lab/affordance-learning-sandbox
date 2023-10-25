@@ -49,6 +49,8 @@ export ISAAC_HOME=$HOME/.local/share/ov/pkg/isaac_sim-2022.2.1
 1. `chmod +x <path-to-appimage>`
 2. `sudo apt install libfuse2`
 
+**Note:** When running Isaac Sim, sometimes it will take some time to compile the shaders. This is normal and will only happen the first time you run the application or if the cache has been cleared. Either way, if you click anywhere else from the main window, Linux will think that the app has crashed and will ask you to force quit. To work around this, just wait for the shaders to compile and don't click anywhere else when the compilation is being done.
+
 ### ⚛️ Nucleus
 
 The USD files for Franka robots and a few other models are used from the Nvidia Omniverse Nucleus server. The Nucleus server can be started by running the following command. A one time local server credentials creation will be needed when Nucleus is setup for the first time.
