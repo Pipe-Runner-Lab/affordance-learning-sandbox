@@ -3,11 +3,14 @@ from omni.isaac.core.utils.extensions import enable_extension
 enable_extension("omni.replicator.isaac")  # required by OIGE
 enable_extension("omni.kit.window.viewport")  # required by OIGE
 
-import torch
-import numpy as np
-from omni.isaac.core.utils.stage import get_current_stage
-from .asset_loader import spawn_cabinet, spawn_robot, spawn_target
-from .utils import (
+import torch  # noqa: E402
+import numpy as np  # noqa: E402
+from omni.isaac.core.utils.stage import get_current_stage  # noqa: E402
+from .asset_loader import (  # noqa: E402
+    spawn_cabinet,
+    spawn_robot,
+)
+from .utils import (  # noqa: E402
     compute_grasp_transforms,
     compute_reward,
     get_robot_local_grasp_transforms,
@@ -32,6 +35,8 @@ TASK_CFG = {
     "headless": True,  # get_env_instance(headless=False) overrides this
     "sim_device": "gpu",
     "enable_livestream": False,
+    "warp": False,
+    "seed": 0,
     "task": {
         "name": "AffordanceBlockPickPlace",
         "physics_engine": "physx",
@@ -66,6 +71,8 @@ TASK_CFG = {
             "use_flatcache": True,
             "enable_scene_query_support": False,
             "enable_cameras": False,
+            "add_distant_light": False,
+            "use_fabric": True,
             "default_physics_material": {
                 "static_friction": 1.0,
                 "dynamic_friction": 1.0,
@@ -203,7 +210,8 @@ class FrankaCabinetTask(RLTask):
             (self._num_envs, 1)
         )
 
-        # * gripper forward, up axis and drawer inward, up axis, used for aligning gripper with drawer
+        # * gripper forward, up axis and drawer inward, up axis, used for
+        # * aligning gripper with drawer
         self.gripper_forward_axis = torch.tensor(
             [0, 0, 1], device=self._device, dtype=torch.float
         ).repeat((self._num_envs, 1))
@@ -304,7 +312,7 @@ class FrankaCabinetTask(RLTask):
         )
 
     def get_observations(self) -> dict:
-        # -------------------- COMPUTATION FOR OBSERVATION BUFFER -------------------- #
+        # -------------- COMPUTATION FOR OBSERVATION BUFFER ----------------#
 
         hand_pos, hand_rot = self._robots._hands.get_world_poses(clone=False)
         drawer_pos, drawer_rot = self._cabinets._drawers.get_world_poses(
@@ -348,21 +356,6 @@ class FrankaCabinetTask(RLTask):
         )
         dof_vel_scaled = robot_dof_vel * self._dof_vel_scale
 
-        # assuming sensor noise
-        generalization_noise = (
-            torch.rand((dof_vel_scaled.shape[0], 7), device=self._device) + 0.5
-        )
-
-        # Look at observation table:
-        # https://skrl.readthedocs.io/en/latest/intro/examples.html#real-world-examples
-        # TODO: Use torch.cat
-        # TODO: Add gripper pos and vel
-        # TODO: Target rot should also be added
-        # self.obs_buf[:, 0] = self.progress_buf / self._max_episode_length
-        # self.obs_buf[:, 1:8] = dof_pos_scaled[:, :7]
-        # self.obs_buf[:, 8:15] = dof_vel_scaled[:, :7] * generalization_noise
-        # self.obs_buf[:, 15:18] = target_pos - self._env_pos
-
         self.obs_buf = torch.cat(
             (
                 dof_pos_scaled,  # size 9
@@ -378,7 +371,7 @@ class FrankaCabinetTask(RLTask):
             dim=-1,
         )
 
-        # --------------------- PRE-COMPUTATION FOR REWARD BUFFER -------------------- #
+        # -------------- PRE-COMPUTATION FOR REWARD BUFFER ------------- #
         self.robot_dof_pos = robot_dof_pos
         self.cabinet_dof_pos = cabinet_dof_pos
         self.robot_grasp_pos, self.robot_grasp_rot = (

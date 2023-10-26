@@ -28,18 +28,20 @@ The following steps are required to run the project.
 
 ## 🦾 Nvidia Omniverse
 
-The project uses Nvidia Omniverse to render the simulation. The Omniverse application can be downloaded from the [Nvidia Omniverse website](https://www.nvidia.com/en-us/design-visualization/omniverse/).
+The project uses Nvidia Omniverse to render the simulation. The Omniverse application can be downloaded from the [Nvidia Omniverse website](https://www.nvidia.com/en-us/design-visualization/omniverse/). Make sure to install version number **2023.1.0**.
 
-Once installation is done, add the `ISAAC_HOME` path to the environment variable list. This points to the root of Isaac sim installation. For example, my installation is at `D:\Tools\Omniverse\pkg\isaac_sim-2022.2.1`. This is how I have added it to my environment variables on Windows:
+Once installation is done, add the `ISAAC_HOME` path to the environment variable list. This points to the root of Isaac sim installation. For example, my installation is at `D:\Tools\Omniverse\pkg\isaac_sim-2023.1.0`. This is how I have added it to my environment variables on Windows:
 
 <center>
 <img src="./docs/images/env_vars.png" alt="Environment Variables" width="500"/>
 </center>
 
+> The above image is outdated since this image was taken with an older version. Please don't use this as reference for the version number.
+
 On Linux, simply add the following to your `.bashrc` or `.zshrc` file. I have assume default installation path set by Omniverse.
 
 ```bash
-export ISAAC_HOME=$HOME/.local/share/ov/pkg/isaac_sim-2022.2.1
+export ISAAC_HOME=$HOME/.local/share/ov/pkg/isaac_sim-2023.1.0
 ```
 
 **Note:** This is important for the environment setup script uses this variable to complete the rest of the setup.
@@ -64,7 +66,7 @@ The project uses conda to manage the python environment. The conda package manag
 
 ### 🐍 Python
 
-We start off by creating and activating a new environment for the project. We will use python version 3.7.
+We start off by creating and activating a new environment for the project. We will use python version 3.10.
 
 ```bash
 conda remove --name isaac-sim --all # Remove the environment if it already exists
@@ -92,11 +94,13 @@ source ./scripts/setup_conda_env.sh
 
 The project dependencies can be installed by running the following command from the root of the project.
 
-**Note:** Ensure that pytorch is able to detect the GPU else the training scripts won't work. I had to switch to a different version of cuda for pytorch to detect the GPU. This is how I did it on Windows:
+**Note:** Ensure that pytorch is able to detect the GPU else the training scripts won't work. I had to switch to a different version of cuda for pytorch to detect the GPU. This is how I did it on my environment:
 
 ```bash
-conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
 ```
+
+**Note:** Since Omniverse has supplementary libraries that are meant to work with pytorch 2.0.1, we have to make sure the version we are installing in exactly the same as the one that Omniverse uses. Otherwise we will run into compatibility issues.
 
 ### 🔼 Additional Dependencies
 
@@ -129,3 +133,5 @@ tensorboard --logdir runs
   - A. https://forums.developer.nvidia.com/t/cannot-import-omni-isaac-core/242977/2
 - Q. How to setup VS Code for Omniverse?
   - A. https://docs.omniverse.nvidia.com/isaacsim/latest/manual_standalone_python.html#isaac-sim-python-vscode
+- Q. Why do I have to install torch by myself?
+  - A. https://stackoverflow.com/questions/69180740/cant-install-gpu-enabled-pytorch-in-conda-environment-from-environment-yml
