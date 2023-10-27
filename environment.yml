@@ -6,10 +6,6 @@ channels:
 dependencies:
   - python=3.10
   - pip
-  - pytorch
-  - torchvision
-  - torchaudio
-  - cuda-toolkit=11.7
   - pip:
       - stable-baselines3==2.0.0 # TODO: remove unused lib
       - tensorboard==2.11.0

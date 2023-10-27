@@ -98,7 +98,6 @@ The project dependencies can be installed by running the following command from 
 **Note:** Ensure that pytorch is able to detect the GPU else the training scripts won't work. I had to switch to a different version of cuda for pytorch to detect the GPU. This is how I did it on my environment:
 
 ```bash
-pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
 conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
 ```
 
