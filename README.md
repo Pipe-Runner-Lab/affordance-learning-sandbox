@@ -69,6 +69,7 @@ The project uses conda to manage the python environment. The conda package manag
 We start off by creating and activating a new environment for the project. We will use python version 3.10.
 
 ```bash
+conda deactivate # Deactivate any existing environment
 conda remove --name isaac-sim --all # Remove the environment if it already exists
 conda env create -f environment.yml
 conda activate isaac-sim
@@ -98,6 +99,7 @@ The project dependencies can be installed by running the following command from 
 
 ```bash
 pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
+conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
 ```
 
 **Note:** Since Omniverse has supplementary libraries that are meant to work with pytorch 2.0.1, we have to make sure the version we are installing in exactly the same as the one that Omniverse uses. Otherwise we will run into compatibility issues.
@@ -135,3 +137,5 @@ tensorboard --logdir runs
   - A. https://docs.omniverse.nvidia.com/isaacsim/latest/manual_standalone_python.html#isaac-sim-python-vscode
 - Q. Why do I have to install torch by myself?
   - A. https://stackoverflow.com/questions/69180740/cant-install-gpu-enabled-pytorch-in-conda-environment-from-environment-yml
+- Q. Can't run extension workflow from OIGE?
+  - https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/issues/86#issuecomment-1773917767

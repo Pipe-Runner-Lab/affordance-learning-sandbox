@@ -151,7 +151,8 @@ def compute_reward(
         .squeeze(-1)
         .squeeze(-1)
     )  # alignment of up axis for gripper
-    # reward for matching the orientation of the hand to the drawer (fingers wrapped)
+    # reward for matching the orientation of the hand to the drawer
+    # (fingers wrapped)
     rot_reward = 0.5 * (
         torch.sign(dot1) * dot1**2 + torch.sign(dot2) * dot2**2
     )
@@ -216,11 +217,5 @@ def compute_reward(
         rewards + (2.0 * around_handle_reward),
         rewards,
     )
-
-    # # prevent bad style in opening drawer
-    # rewards = torch.where(franka_lfinger_pos[:, 0] < drawer_grasp_pos[:, 0] - distX_offset,
-    #                       torch.ones_like(rewards) * -1, rewards)
-    # rewards = torch.where(franka_rfinger_pos[:, 0] < drawer_grasp_pos[:, 0] - distX_offset,
-    #                       torch.ones_like(rewards) * -1, rewards)
 
     return rewards

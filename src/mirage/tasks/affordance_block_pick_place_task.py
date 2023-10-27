@@ -6,8 +6,8 @@ enable_extension("omni.kit.window.viewport")  # required by OIGE
 import torch
 import numpy as np
 from omni.isaac.core.utils.stage import get_current_stage
-from .asset_loader import spawn_robot, spawn_target
-from .utils import get_robot_local_grasp_transforms
+from .franka_cabinet.asset_loader import spawn_robot, spawn_target
+from .franka_cabinet.utils import get_robot_local_grasp_transforms
 from omniisaacgymenvs.tasks.base.rl_task import RLTask  # noqa: E402
 
 

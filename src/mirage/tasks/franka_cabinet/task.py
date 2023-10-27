@@ -29,141 +29,34 @@ from omniisaacgymenvs.tasks.base.rl_task import RLTask  # noqa: E402
 # - get_extras()
 
 
-TASK_CFG = {
-    "test": False,
-    "device_id": 0,
-    "headless": True,  # get_env_instance(headless=False) overrides this
-    "sim_device": "gpu",
-    "enable_livestream": False,
-    "warp": False,
-    "seed": 0,
-    "task": {
-        "name": "AffordanceBlockPickPlace",
-        "physics_engine": "physx",
-        "env": {
-            "numEnvs": 1024,
-            "envSpacing": 3,
-            "episodeLength": 500,
-            "enableDebugVis": False,  # VS Code debugger
-            "clipObservations": 5.0,
-            "clipActions": 1.0,
-            "controlFrequencyInv": 2,
-            # observation and action space
-            "numObservations": 23,
-            "numActions": 9,
-            # scales
-            "actionScale": 7.5,
-            "dofVelocityScale": 0.1,
-            "distRewardScale": 2.0,
-            "rotRewardScale": 0.5,
-            "aroundHandleRewardScale": 10.0,
-            "openRewardScale": 7.5,
-            "fingerDistRewardScale": 100.0,
-            "actionPenaltyScale": 0.01,
-            "fingerCloseRewardScale": 10.0,
-            "topDrawerJointThreshold": 0.39,
-        },
-        "sim": {
-            "dt": 0.0083,  # 1 / 120
-            "use_gpu_pipeline": True,
-            "gravity": [0.0, 0.0, -9.81],
-            "add_ground_plane": True,
-            "use_flatcache": True,
-            "enable_scene_query_support": False,
-            "enable_cameras": False,
-            "add_distant_light": False,
-            "use_fabric": True,
-            "default_physics_material": {
-                "static_friction": 1.0,
-                "dynamic_friction": 1.0,
-                "restitution": 0.0,
-            },
-            "physx": {
-                # * Number of worker threads per scene used by
-                # * PhysX - for CPU PhysX only
-                "worker_thread_count": 4,
-                # * 0: pgs, 1 : Temporal Gauss-Seidel (TGS) solver
-                "solver_type": 1,
-                "use_gpu": True,
-                "solver_position_iteration_count": 12,
-                "solver_velocity_iteration_count": 1,
-                "contact_offset": 0.005,
-                "rest_offset": 0.0,
-                "bounce_threshold_velocity": 0.2,
-                "friction_offset_threshold": 0.04,
-                "friction_correlation_distance": 0.025,
-                "enable_sleeping": True,
-                "enable_stabilization": True,
-                "max_depenetration_velocity": 1000.0,
-                # GPU buffers
-                "gpu_max_rigid_contact_count": 524288,
-                "gpu_max_rigid_patch_count": 33554432,
-                "gpu_found_lost_pairs_capacity": 524288,
-                "gpu_found_lost_aggregate_pairs_capacity": 262144,
-                "gpu_total_aggregate_pairs_capacity": 1048576,
-                "gpu_max_soft_body_contacts": 1048576,
-                "gpu_max_particle_contacts": 1048576,
-                "gpu_heap_capacity": 33554432,
-                "gpu_temp_buffer_capacity": 16777216,
-                "gpu_max_num_partitions": 8,
-            },
-            "robot": {
-                "override_usd_defaults": False,
-                "fixed_base": True,  # ! changed to true
-                "enable_self_collisions": False,
-                "enable_gyroscopic_forces": True,
-                "solver_position_iteration_count": 12,
-                "solver_velocity_iteration_count": 1,
-                "sleep_threshold": 0.005,
-                "stabilization_threshold": 0.001,
-                "density": -1,
-                "max_depenetration_velocity": 1000.0,
-                "contact_offset": 0.005,  # ! not in original
-                "rest_offset": 0.0,  # ! not in original
-            },
-            "cabinet": {
-                # -1 to use default values
-                "override_usd_defaults": False,
-                "enable_self_collisions": False,
-                "enable_gyroscopic_forces": True,
-                # also in stage params
-                # per-actor
-                "solver_position_iteration_count": 12,
-                "solver_velocity_iteration_count": 1,
-                "sleep_threshold": 0.0,
-                "stabilization_threshold": 0.001,
-                # per-body
-                "density": -1,
-                "max_depenetration_velocity": 1000.0,
-            },
-        },
-    },
-}
-
-
 class FrankaCabinetTask(RLTask):
     def __init__(self, name, sim_config, env, offset=None) -> None:
+        self.update_config(sim_config)
+        self.dt = 1 / 60.0
+
+        # observation and action space
+        self._num_observations = 23
+        self._num_actions = 9
+
+        RLTask.__init__(self, name, env)
+
+    # isaac extension workflow API
+    def update_config(self, sim_config):
         self._sim_config = sim_config
         self._cfg = sim_config.config
         self._task_cfg = sim_config.task_config
-
-        self.dt = 1 / 60.0
 
         self._num_envs = self._task_cfg["env"]["numEnvs"]
         self._env_spacing = self._task_cfg["env"]["envSpacing"]
 
         self._max_episode_length = self._task_cfg["env"]["episodeLength"]
+
         self.top_drawer_joint_threshold = self._task_cfg["env"][
             "topDrawerJointThreshold"
         ]
 
-        # observation and action space
-        self._num_observations = self._task_cfg["env"]["numObservations"]
-        self._num_actions = self._task_cfg["env"]["numActions"]
-
-        # scaling coefs
-        self._action_scale = self._task_cfg["env"]["actionScale"]
-        self._dof_vel_scale = self._task_cfg["env"]["dofVelocityScale"]
+        self.action_scale = self._task_cfg["env"]["actionScale"]
+        self.dof_vel_scale = self._task_cfg["env"]["dofVelocityScale"]
         self.dist_reward_scale = self._task_cfg["env"]["distRewardScale"]
         self.rot_reward_scale = self._task_cfg["env"]["rotRewardScale"]
         self.around_handle_reward_scale = self._task_cfg["env"][
@@ -178,17 +71,24 @@ class FrankaCabinetTask(RLTask):
             "fingerCloseRewardScale"
         ]
 
-        RLTask.__init__(self, name, env)
-
     def set_up_scene(self, scene) -> None:
-        get_robots = spawn_robot(self)
-        get_cabinets = spawn_cabinet(self)
+        self.get_robots = spawn_robot(self)
+        self.get_cabinets = spawn_cabinet(self)
 
-        super().set_up_scene(scene)
+        super().set_up_scene(scene, filter_collisions=False)
 
         # articulation views views
-        self._robots = get_robots(scene)
-        self._cabinets = get_cabinets(scene)
+        self._robots = self.get_robots(scene)
+        self._cabinets = self.get_cabinets(scene)
+
+        self.init_data()
+
+    # isaac extension workflow API
+    def initialize_views(self, scene):
+        super().initialize_views(scene)
+
+        self._robots = self.get_robots(scene)
+        self._cabinets = self.get_cabinets(scene)
 
         self.init_data()
 
@@ -295,7 +195,7 @@ class FrankaCabinetTask(RLTask):
             + self.robot_dof_speed_scales
             * self.dt
             * self.actions
-            * self._action_scale
+            * self.action_scale
         )
 
         # clamp dof targets to limits
@@ -354,7 +254,7 @@ class FrankaCabinetTask(RLTask):
             / (self.robot_dof_upper_limits - self.robot_dof_lower_limits)
             - 1.0
         )
-        dof_vel_scaled = robot_dof_vel * self._dof_vel_scale
+        dof_vel_scaled = robot_dof_vel * self.dof_vel_scale
 
         self.obs_buf = torch.cat(
             (

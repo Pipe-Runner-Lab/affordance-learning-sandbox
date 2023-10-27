@@ -45,9 +45,16 @@ def spawn_robot(task: RLTask):
     )
 
     def get_robot_view(scene: Scene):
+        view_object_name = "robot_view"
+
+        if scene.object_exists(view_object_name):
+            scene.remove_object(view_object_name, registry_only=True)
+
+        # have to use "franka" here because lfingers and rfingers are children
+        # of franka
         robots = RobotView(
-            prim_paths_expr="/World/envs/.*/franka", name="robot_view"
-        )  # have to use "franka" here because lfingers and rfingers are children of franka
+            prim_paths_expr="/World/envs/.*/franka", name=view_object_name
+        )
         scene.add(robots)
         scene.add(robots._hands)
         scene.add(robots._lfingers)
@@ -71,8 +78,13 @@ def spawn_cabinet(task: RLTask):
     )
 
     def get_cabinet_view(scene: Scene):
+        view_object_name = "cabinet_view"
+
+        if scene.object_exists(view_object_name):
+            scene.remove_object(view_object_name, registry_only=True)
+
         cabinet = CabinetView(
-            prim_paths_expr="/World/envs/.*/cabinet", name="cabinet_view"
+            prim_paths_expr="/World/envs/.*/cabinet", name=view_object_name
         )
         scene.add(cabinet)
         scene.add(cabinet._drawers)  # only the top drawer is given here
@@ -103,8 +115,13 @@ def spawn_target(task: RLTask):
     )
 
     def get_target_view(scene: Scene):
+        view_object_name = "target_view"
+
+        if scene.object_exists(view_object_name):
+            scene.remove_object(view_object_name, registry_only=True)
+
         targets = RigidPrimView(
-            prim_paths_expr="/World/envs/.*/target", name="target_view"
+            prim_paths_expr="/World/envs/.*/target", name=view_object_name
         )
         scene.add(targets)
         return targets
