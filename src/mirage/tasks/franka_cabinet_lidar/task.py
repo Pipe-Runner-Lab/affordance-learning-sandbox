@@ -82,13 +82,13 @@ class FrankaCabinetLidarTask(RLTask):
         # lidar view
         from .view import LidarView  # noqa: E402
 
-        self._point_cloud = {}
+        self.lidars = {}
         for i in range(self._num_envs):
-            self._point_cloud[i] = LidarView(
+            self.lidars[i] = LidarView(
                 prim_paths=f"/World/envs/env_{i}/franka/panda_hand/Lidar",
                 name=f"lidar_view_{i}",
             )
-            scene.add(self._point_cloud[i])
+            scene.add(self.lidars[i])
 
         self.init_data()
 
@@ -183,6 +183,9 @@ class FrankaCabinetLidarTask(RLTask):
         self.reset_idx(reset_env_ids)
 
     def pre_physics_step(self, actions: torch.Tensor) -> None:
+        # mandatory call for lidar to work
+        self._env.render()
+
         # ! WHY?
         if not self._env._world.is_playing():
             return
@@ -221,6 +224,8 @@ class FrankaCabinetLidarTask(RLTask):
         )
 
     def get_observations(self) -> dict:
+        print(self.lidars[0].get_current_frame())
+
         # -------------- COMPUTATION FOR OBSERVATION BUFFER ----------------#
 
         hand_pos, hand_rot = self._robots._hands.get_world_poses(clone=False)

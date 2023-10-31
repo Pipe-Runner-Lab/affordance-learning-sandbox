@@ -30,10 +30,8 @@ def spawn_lidar_robot(task: RLTask):
         translation=torch.tensor([1.0, 0.0, 0.0]),
         orientation=torch.tensor([0.0, 0.0, 0.0, 1.0]),
         name="robot",
-        # usd_path="src/mirage/assets/usd/franka_lidar_instanceable.usd",
+        usd_path="assets/usd/franka_lidar_instanceable.usd",
     )
-
-    print(robot)
 
     task._sim_config.apply_articulation_settings(
         "robot",  # this parameter is useless if config is provided

@@ -2,9 +2,8 @@ import torch
 from ..tasks.franka_cabinet_lidar.config import TASK_CFG
 from omni.isaac.gym.vec_env import VecEnvBase
 
-TASK_CFG["headless"] = True
+TASK_CFG["headless"] = False
 TASK_CFG["task"]["env"]["numEnvs"] = 1
-
 
 env = VecEnvBase(headless=TASK_CFG["headless"])
 

@@ -4,6 +4,7 @@
 - [🧪 Setup](#-setup)
   - [💻 Device Specifications](#-device-specifications)
   - [🦾 Nvidia Omniverse](#-nvidia-omniverse)
+    - [App Dependencies](#app-dependencies)
     - [⚛️ Nucleus](#️-nucleus)
   - [🌿 Conda](#-conda)
     - [🐍 Python](#-python)
@@ -52,6 +53,17 @@ export ISAAC_HOME=$HOME/.local/share/ov/pkg/isaac_sim-2023.1.0
 2. `sudo apt install libfuse2`
 
 **Note:** When running Isaac Sim, sometimes it will take some time to compile the shaders. This is normal and will only happen the first time you run the application or if the cache has been cleared. Either way, if you click anywhere else from the main window, Linux will think that the app has crashed and will ask you to force quit. To work around this, just wait for the shaders to compile and don't click anywhere else when the compilation is being done.
+
+### App Dependencies
+
+TODO
+`omni.isaac.sim.python.gym.headless.kit` and `omni.isaac.sim.python.gym.kit`.
+
+```bash
+...
+...
+"omni.isaac.sensor" = {}
+```
 
 ### ⚛️ Nucleus
 
@@ -138,3 +150,5 @@ tensorboard --logdir runs
   - A. https://stackoverflow.com/questions/69180740/cant-install-gpu-enabled-pytorch-in-conda-environment-from-environment-yml
 - Q. Can't run extension workflow from OIGE?
   - https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/issues/86#issuecomment-1773917767
+- Q. [carb.physx.python] TypeError: can't convert np.ndarray of type numpy.uint16.
+  - A. https://forums.developer.nvidia.com/t/lidar-cannot-detect-the-collision-enabled-model-and-cannot-use-semantic-data-on-oige/257765/4?u=piperunner.in

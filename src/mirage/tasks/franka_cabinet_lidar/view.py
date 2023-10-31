@@ -6,33 +6,15 @@ class LidarView(RotatingLidarPhysX):
         super().__init__(
             prim_paths,
             name,
-            rotation_frequency=0.0,
-            fov=[70, 50],
-            resolution=[1, 1],
-            valid_range=[0.1, 1.0],
+            rotation_frequency=0,
+            fov=(160, 30),
+            resolution=(0.4, 4.0),
+            valid_range=(0.2, 2.3),
         )
-        self._lidar = RotatingLidarPhysX(
-            prim_path=prim_paths,
-            name=name,
-            rotation_frequency=0.0,
-            fov=[70, 50],
-            resolution=[0.5, 0.5],
-            valid_range=[0.1, 1.0],
+        self.add_depth_data_to_frame()
+        self.add_point_cloud_data_to_frame()
+        self.add_semantics_data_to_frame()
+        self.enable_visualization(
+            high_lod=False, draw_points=False, draw_lines=True
         )
-
-        self._lidar.add_depth_data_to_frame()
-        self._lidar.add_point_cloud_data_to_frame()
-        self._lidar.add_semantics_data_to_frame()
-        self._lidar.enable_visualization(
-            high_lod=True, draw_points=False, draw_lines=True
-        )
-        self._lidar.initialize()
-
-    @property
-    def lidar(self) -> RotatingLidarPhysX:
-        """[summary]
-
-        Returns:
-            RotatingLidarPhysX: [description]
-        """
-        return self._lidar
+        self.initialize()
