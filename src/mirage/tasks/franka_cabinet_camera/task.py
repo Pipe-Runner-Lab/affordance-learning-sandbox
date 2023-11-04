@@ -7,11 +7,11 @@ import torch  # noqa: E402
 import numpy as np  # noqa: E402
 from gym import spaces  # noqa: E402
 from omni.isaac.core.utils.stage import get_current_stage  # noqa: E402
-from ..franka_cabinet.asset_loader import (  # noqa: E402
+from ...objects.asset_loader import (  # noqa: E402
     spawn_cabinet,
     spawn_robot,
 )
-from ..franka_cabinet.utils import (  # noqa: E402
+from ...computation.transforms import (  # noqa: E402
     compute_grasp_transforms,
     compute_reward,
     get_robot_local_grasp_transforms,

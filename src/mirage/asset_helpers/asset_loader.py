@@ -6,15 +6,13 @@ from omniisaacgymenvs.robots.articulations.cabinet import Cabinet
 from omniisaacgymenvs.robots.articulations.views.franka_view import (
     FrankaView as RobotView,
 )
-from omniisaacgymenvs.robots.articulations.views.cabinet_view import (
-    CabinetView,
-)
+from .custom_view import CabinetView
 from omni.isaac.core.objects import DynamicCuboid
 from omni.isaac.core.prims import RigidPrimView
 from omni.isaac.core.scenes.scene import Scene
 
 
-def spawn_robot(task: RLTask):
+def spawn_robot(task: RLTask, usd_path=None):
     """Spawn franka robot in the scene.
     Note: The view function should only be called after
     super().set_up_scene() is called since set_up_scene is responsible for
@@ -36,6 +34,7 @@ def spawn_robot(task: RLTask):
         translation=torch.tensor([1.0, 0.0, 0.0]),
         orientation=torch.tensor([0.0, 0.0, 0.0, 1.0]),
         name="robot",
+        usd_path=usd_path,
     )
 
     task._sim_config.apply_articulation_settings(
@@ -87,7 +86,8 @@ def spawn_cabinet(task: RLTask):
             prim_paths_expr="/World/envs/.*/cabinet", name=view_object_name
         )
         scene.add(cabinet)
-        scene.add(cabinet._drawers)  # only the top drawer is given here
+        scene.add(cabinet._top_drawers)
+        scene.add(cabinet._bottom_drawers)
         return cabinet
 
     return get_cabinet_view

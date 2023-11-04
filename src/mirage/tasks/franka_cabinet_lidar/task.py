@@ -7,24 +7,16 @@ import torch  # noqa: E402
 import numpy as np  # noqa: E402
 from omniisaacgymenvs.tasks.base.rl_task import RLTask  # noqa: E402
 from omni.isaac.core.utils.stage import get_current_stage  # noqa: E402
-from ..franka_cabinet.asset_loader import spawn_cabinet  # noqa: E402
-from .asset_loader import spawn_lidar_robot as spawn_robot  # noqa: E402
-from ..franka_cabinet.utils import (  # noqa: E402
+from ...asset_helpers.asset_loader import (  # noqa: E402
+    spawn_cabinet,
+    spawn_robot,
+)
+from ...utils.transforms_utils import (  # noqa: E402
     compute_grasp_transforms,
-    compute_reward,
     get_robot_local_grasp_transforms,
 )
-
-
-# provides inverse kinematics utils for cartesian space
-# from skrl.utils import omniverse_isaacgym_utils
-
-# post_physics_step calls
-# - get_observations()
-# - get_states()
-# - calculate_metrics()
-# - is_done()
-# - get_extras()
+from ..franka_cabinet_drawer_1_open.reward import compute_reward  # noqa: E402
+from ...asset_helpers.custom_view import LidarView  # noqa: E402
 
 
 class FrankaCabinetLidarTask(RLTask):
@@ -70,7 +62,9 @@ class FrankaCabinetLidarTask(RLTask):
         ]
 
     def set_up_scene(self, scene) -> None:
-        self.get_robots = spawn_robot(self)
+        self.get_robots = spawn_robot(
+            self, usd_path="assets/usd/franka_lidar_instanceable.usd"
+        )
         self.get_cabinets = spawn_cabinet(self)
 
         super().set_up_scene(scene, filter_collisions=False)
@@ -78,9 +72,6 @@ class FrankaCabinetLidarTask(RLTask):
         # articulation views views
         self._robots = self.get_robots(scene)
         self._cabinets = self.get_cabinets(scene)
-
-        # lidar view
-        from .view import LidarView  # noqa: E402
 
         self.lidars = {}
         for i in range(self._num_envs):

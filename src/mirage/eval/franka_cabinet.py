@@ -3,7 +3,7 @@ from skrl.resources.preprocessors.torch import RunningStandardScaler
 from skrl.trainers.torch import SequentialTrainer
 from skrl.utils.omniverse_isaacgym_utils import get_env_instance
 from skrl.envs.torch import wrap_env
-from ..tasks.franka_cabinet.config import TASK_CFG
+from ..tasks.franka_cabinet_drawer_bottom_open.config import TASK_CFG
 from ..models.ppo import Policy
 
 TASK_CFG["task"]["env"]["numEnvs"] = 64
@@ -15,11 +15,13 @@ env = get_env_instance(
 )  # both this and config needs to be headless
 
 from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig  # noqa
-from ..tasks.franka_cabinet.task import FrankaCabinetTask  # noqa: E402
+from ..tasks.franka_cabinet_drawer_bottom_open.task import (  # noqa: E402
+    CustomTask,
+)
 
 sim_config = SimConfig(TASK_CFG)
-task = FrankaCabinetTask(
-    name="AffordanceBlockPickPlace", sim_config=sim_config, env=env
+task = CustomTask(
+    name="Franka Cabinet Drawer 1 Open Task", sim_config=sim_config, env=env
 )
 env.set_task(
     task=task,
@@ -59,7 +61,7 @@ agent = PPO(
 )
 
 # load checkpoints
-agent.load("runs/23-10-27_13-42-44-236910_PPO/checkpoints/best_agent.pt")
+agent.load("runs/23-11-04_11-55-39-455752_PPO/checkpoints/best_agent.pt")
 
 # Configure and instantiate the RL trainer
 cfg_trainer = {"timesteps": 5000}
