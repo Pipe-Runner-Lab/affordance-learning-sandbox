@@ -4,7 +4,7 @@ from omni.isaac.core.utils.torch.transformations import (
 )
 
 
-def compute_open_drawer_reward(
+def compute_close_drawer_reward(
     # entities
     actions,
     robot_dof_pos,
@@ -92,27 +92,27 @@ def compute_open_drawer_reward(
     action_penalty = torch.sum(actions**2, dim=-1)
 
     # how far the cabinet has been opened out
-    open_reward = (
-        cabinet_dof_pos[:, 3] * around_handle_reward + cabinet_dof_pos[:, 3]
+    close_reward = (0.3 - cabinet_dof_pos[:, 3]) * around_handle_reward + (
+        0.3 - cabinet_dof_pos[:, 3]
     )  # drawer_top_joint
 
     rewards = (
         dist_reward_scale * dist_reward
         + rot_reward_scale * rot_reward
         + around_handle_reward_scale * around_handle_reward
-        + open_reward_scale * open_reward
+        + open_reward_scale * close_reward
         + finger_dist_reward_scale * finger_dist_reward
         - action_penalty_scale * action_penalty
         + finger_close_reward * finger_close_reward_scale
     )
 
-    # bonus for opening drawer properly
-    rewards = torch.where(cabinet_dof_pos[:, 3] > 0.01, rewards + 0.5, rewards)
+    # bonus for closing drawer properly
+    rewards = torch.where(cabinet_dof_pos[:, 3] < 0.3, rewards + 0.5, rewards)
     rewards = torch.where(
-        cabinet_dof_pos[:, 3] > 0.2, rewards + around_handle_reward, rewards
+        cabinet_dof_pos[:, 3] < 0.2, rewards + around_handle_reward, rewards
     )
     rewards = torch.where(
-        cabinet_dof_pos[:, 3] > 0.39,
+        cabinet_dof_pos[:, 3] < 0.1,
         rewards + (2.0 * around_handle_reward),
         rewards,
     )

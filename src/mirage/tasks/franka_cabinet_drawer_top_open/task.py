@@ -14,7 +14,7 @@ from ...utils.transforms_utils import (  # noqa: E402
     compute_grasp_transforms,
     get_robot_local_grasp_transforms,
 )
-from .reward import compute_reward  # noqa: E402
+from .reward import compute_open_drawer_reward  # noqa: E402
 from omniisaacgymenvs.tasks.base.rl_task import RLTask  # noqa: E402
 
 
@@ -290,7 +290,7 @@ class CustomTask(RLTask):
         return {self._robots.name: {"obs_buf": self.obs_buf}}
 
     def calculate_metrics(self) -> None:
-        self.rew_buf[:] = compute_reward(
+        self.rew_buf[:] = compute_open_drawer_reward(
             self.actions,
             self.robot_dof_pos,
             self.cabinet_dof_pos,

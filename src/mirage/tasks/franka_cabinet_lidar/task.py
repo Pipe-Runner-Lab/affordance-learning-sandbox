@@ -15,7 +15,9 @@ from ...utils.transforms_utils import (  # noqa: E402
     compute_grasp_transforms,
     get_robot_local_grasp_transforms,
 )
-from ..franka_cabinet_drawer_1_open.reward import compute_reward  # noqa: E402
+from ..franka_cabinet_drawer_1_open.reward import (
+    compute_open_drawer_reward,
+)  # noqa: E402
 from ...asset_helpers.custom_view import LidarView  # noqa: E402
 
 
@@ -300,7 +302,7 @@ class FrankaCabinetLidarTask(RLTask):
         return {self._robots.name: {"obs_buf": self.obs_buf}}
 
     def calculate_metrics(self) -> None:
-        self.rew_buf[:] = compute_reward(
+        self.rew_buf[:] = compute_open_drawer_reward(
             self.actions,
             self.robot_dof_pos,
             self.cabinet_dof_pos,
