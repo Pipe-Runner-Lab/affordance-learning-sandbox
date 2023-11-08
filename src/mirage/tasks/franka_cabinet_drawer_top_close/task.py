@@ -1,21 +1,21 @@
+import torch
 from omni.isaac.core.utils.extensions import enable_extension
+from ..franka_cabinet_drawer_top_open.task import (
+    CustomTask as BaseTask,
+)
+from .reward import compute_close_drawer_reward
+from .config import JOINT_INDEX
+from .reward import TOP_DRAWER_ALMOST_CLOSED, TOP_DRAWER_JOINT_ALMOST_OPEN
 
 enable_extension("omni.replicator.isaac")  # required by OIGE
 enable_extension("omni.kit.window.viewport")  # required by OIGE
-
-import torch  # noqa
-from ..franka_cabinet_drawer_top_open.task import (  # noqa
-    CustomTask as BaseTask,
-)
-from .reward import compute_close_drawer_reward  # noqa
-from ...utils.transforms_utils import compute_grasp_transforms  # noqa
 
 
 class CustomTask(BaseTask):
     def is_done(self) -> None:
         # reset if drawer is open or max length reached
         self.reset_buf = torch.where(
-            self.cabinet_dof_pos[:, 3] < 0.1,
+            self.cabinet_dof_pos[:, JOINT_INDEX] < TOP_DRAWER_ALMOST_CLOSED,
             torch.ones_like(self.reset_buf),
             self.reset_buf,
         )
@@ -61,7 +61,7 @@ class CustomTask(BaseTask):
         default_cabinet_dof_pos = torch.zeros_like(
             self._cabinets.get_joint_positions(clone=False)[env_ids]
         )
-        default_cabinet_dof_pos[:, 3] = 0.3
+        default_cabinet_dof_pos[:, JOINT_INDEX] = TOP_DRAWER_JOINT_ALMOST_OPEN
         self._cabinets.set_joint_positions(
             default_cabinet_dof_pos,
             indices=indices,

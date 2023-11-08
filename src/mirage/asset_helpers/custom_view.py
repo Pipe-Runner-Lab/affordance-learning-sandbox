@@ -29,6 +29,26 @@ class CabinetView(ArticulationView):
             name="bottom_drawers_view",
             reset_xform_properties=False,
         )
+        self._left_door = RigidPrimView(
+            prim_paths_expr="/World/envs/.*/cabinet/door_left_link",
+            name="bottom_drawers_view",
+            reset_xform_properties=False,
+        )
+        self._left_door_knob = RigidPrimView(
+            prim_paths_expr="/World/envs/.*/cabinet/door_left_nob_link",
+            name="bottom_drawers_view",
+            reset_xform_properties=False,
+        )
+        self._right_door = RigidPrimView(
+            prim_paths_expr="/World/envs/.*/cabinet/door_right_link",
+            name="bottom_drawers_view",
+            reset_xform_properties=False,
+        )
+        self._right_door_knob = RigidPrimView(
+            prim_paths_expr="/World/envs/.*/cabinet/door_right_nob_link",
+            name="bottom_drawers_view",
+            reset_xform_properties=False,
+        )
 
 
 class LidarView(RotatingLidarPhysX):

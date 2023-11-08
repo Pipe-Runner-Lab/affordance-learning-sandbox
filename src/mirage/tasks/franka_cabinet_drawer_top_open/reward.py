@@ -2,6 +2,11 @@ import torch
 from omni.isaac.core.utils.torch.transformations import (
     tf_vector,
 )
+from .config import JOINT_INDEX
+
+TOP_DRAWER_JOINT_ALMOST_OPEN = 0.39  # almost open
+TOP_DRAWER_JOINT_PARTIALLY_OPEN = 0.2  # partially open
+TOP_DRAWER_ALMOST_CLOSED = 0.01  # closed
 
 
 def compute_open_drawer_reward(
@@ -59,7 +64,7 @@ def compute_open_drawer_reward(
     # bonus if left finger is above the drawer handle and right below
     around_handle_reward = torch.zeros_like(rot_reward)
     around_handle_reward = torch.where(
-        robot_lfinger_pos[:, 2] > drawer_grasp_pos[:, 2],
+        robot_lfinger_pos[:, 2] > drawer_grasp_pos[:, 2],  # z axis comparison
         torch.where(
             robot_rfinger_pos[:, 2] < drawer_grasp_pos[:, 2],
             around_handle_reward + 0.5,
@@ -93,7 +98,8 @@ def compute_open_drawer_reward(
 
     # how far the cabinet has been opened out
     open_reward = (
-        cabinet_dof_pos[:, 3] * around_handle_reward + cabinet_dof_pos[:, 3]
+        cabinet_dof_pos[:, JOINT_INDEX] * around_handle_reward
+        + cabinet_dof_pos[:, JOINT_INDEX]
     )  # drawer_top_joint
 
     rewards = (
@@ -107,12 +113,18 @@ def compute_open_drawer_reward(
     )
 
     # bonus for opening drawer properly
-    rewards = torch.where(cabinet_dof_pos[:, 3] > 0.01, rewards + 0.5, rewards)
     rewards = torch.where(
-        cabinet_dof_pos[:, 3] > 0.2, rewards + around_handle_reward, rewards
+        cabinet_dof_pos[:, JOINT_INDEX] > TOP_DRAWER_ALMOST_CLOSED,
+        rewards + 0.5,
+        rewards,
     )
     rewards = torch.where(
-        cabinet_dof_pos[:, 3] > 0.39,
+        cabinet_dof_pos[:, JOINT_INDEX] > TOP_DRAWER_JOINT_PARTIALLY_OPEN,
+        rewards + around_handle_reward,
+        rewards,
+    )
+    rewards = torch.where(
+        cabinet_dof_pos[:, JOINT_INDEX] > TOP_DRAWER_JOINT_ALMOST_OPEN,
         rewards + (2.0 * around_handle_reward),
         rewards,
     )

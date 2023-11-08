@@ -8,21 +8,21 @@ from omni.isaac.core.utils.torch.transformations import tf_combine, tf_inverse
 def get_robot_local_grasp_transforms(
     task: RLTask, stage: Usd.Stage  # pylint: disable=no-member
 ):
-    hand_pose = get_env_local_pose(
+    env_local_hand_pose = get_env_local_pose(
         task._env_pos[0],
         UsdGeom.Xformable(  # pylint: disable=no-member
             stage.GetPrimAtPath("/World/envs/env_0/franka/panda_link7")
         ),
         task._device,
     )
-    lfinger_pose = get_env_local_pose(
+    env_local_lfinger_pose = get_env_local_pose(
         task._env_pos[0],
         UsdGeom.Xformable(  # pylint: disable=no-member
             stage.GetPrimAtPath("/World/envs/env_0/franka/panda_leftfinger")
         ),
         task._device,
     )
-    rfinger_pose = get_env_local_pose(
+    env_local_rfinger_pose = get_env_local_pose(
         task._env_pos[0],
         UsdGeom.Xformable(  # pylint: disable=no-member
             stage.GetPrimAtPath("/World/envs/env_0/franka/panda_rightfinger")
@@ -30,34 +30,41 @@ def get_robot_local_grasp_transforms(
         task._device,
     )
 
-    finger_pose = torch.zeros(7, device=task._device)
-    finger_pose[0:3] = (lfinger_pose[0:3] + rfinger_pose[0:3]) / 2.0
-    finger_pose[3:7] = lfinger_pose[3:7]
-    hand_pose_inv_rot, hand_pose_inv_pos = tf_inverse(
-        hand_pose[3:7], hand_pose[0:3]
+    env_local_finger_pose = torch.zeros(7, device=task._device)
+    env_local_finger_pose[0:3] = (
+        env_local_lfinger_pose[0:3] + env_local_rfinger_pose[0:3]
+    ) / 2.0  # xyz position
+    env_local_finger_pose[3:7] = env_local_lfinger_pose[3:7]  # wxyz quaternion
+
+    # finding inverse translation and rotation of hand
+    env_local_hand_pose_inv_rot, env_local_hand_pose_inv_pos = tf_inverse(
+        env_local_hand_pose[3:7], env_local_hand_pose[0:3]
     )
 
-    # Grasp pose includes both hand and finger pose
-    franka_local_grasp_pose_rot, franka_local_pose_pos = tf_combine(
-        hand_pose_inv_rot,
-        hand_pose_inv_pos,
-        finger_pose[3:7],
-        finger_pose[0:3],
+    # This applies inverse, thus we get the finger pose in the hand frame
+    robot_local_grasp_pose_rot, robot_local_pose_pos = tf_combine(
+        env_local_hand_pose_inv_rot,
+        env_local_hand_pose_inv_pos,
+        env_local_finger_pose[3:7],
+        env_local_finger_pose[0:3],
     )
-    franka_local_pose_pos += torch.tensor([0, 0.04, 0], device=task._device)
+    robot_local_pose_pos += torch.tensor(
+        [0, 0.04, 0], device=task._device
+    )  # TODO: Why?
 
     # repeat for all envs
-    franka_local_grasp_pos = franka_local_pose_pos.repeat((task._num_envs, 1))
-    franka_local_grasp_rot = franka_local_grasp_pose_rot.repeat(
+    robot_local_grasp_pos = robot_local_pose_pos.repeat((task._num_envs, 1))
+    robot_local_grasp_rot = robot_local_grasp_pose_rot.repeat(
         (task._num_envs, 1)
     )
 
-    return franka_local_grasp_pos, franka_local_grasp_rot
+    return robot_local_grasp_pos, robot_local_grasp_rot
 
 
 def get_env_local_pose(env_pos, xformable, device):
-    """Compute pose in env-local coordinates"""
+    """Compute pose in env-local coordinates by subtracting env_pos from world_pos"""
     # env_pos here is only for one env, not all envs
+    # https://docs.omniverse.nvidia.com/dev-guide/latest/programmer_ref/usd/transforms/get-world-transforms.html#get-the-world-space-transforms-for-a-prim
     world_transform = xformable.ComputeLocalToWorldTransform(0)
     world_pos = world_transform.ExtractTranslation()
     world_quat = world_transform.ExtractRotationQuat()
@@ -79,23 +86,23 @@ def get_env_local_pose(env_pos, xformable, device):
 def compute_grasp_transforms(
     hand_rot,
     hand_pos,
-    franka_local_grasp_rot,
-    franka_local_grasp_pos,
+    robot_local_grasp_rot,
+    robot_local_grasp_pos,
     drawer_rot,
     drawer_pos,
     drawer_local_grasp_rot,
     drawer_local_grasp_pos,
 ):
-    global_franka_rot, global_franka_pos = tf_combine(
-        hand_rot, hand_pos, franka_local_grasp_rot, franka_local_grasp_pos
+    global_robot_rot, global_robot_pos = tf_combine(
+        hand_rot, hand_pos, robot_local_grasp_rot, robot_local_grasp_pos
     )
     global_drawer_rot, global_drawer_pos = tf_combine(
         drawer_rot, drawer_pos, drawer_local_grasp_rot, drawer_local_grasp_pos
     )
 
     return (
-        global_franka_rot,
-        global_franka_pos,
+        global_robot_rot,
+        global_robot_pos,
         global_drawer_rot,
         global_drawer_pos,
     )

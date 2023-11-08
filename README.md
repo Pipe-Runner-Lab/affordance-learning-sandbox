@@ -52,7 +52,7 @@ export ISAAC_HOME=$HOME/.local/share/ov/pkg/isaac_sim-2023.1.0
 1. `chmod +x <path-to-appimage>`
 2. `sudo apt install libfuse2`
 
-**Note:** When running Isaac Sim, sometimes it will take some time to compile the shaders. This is normal and will only happen the first time you run the application or if the cache has been cleared. Either way, if you click anywhere else from the main window, Linux will think that the app has crashed and will ask you to force quit. To work around this, just wait for the shaders to compile and don't click anywhere else when the compilation is being done.
+**Note:** When running Isaac Sim, sometimes it will take some time to compile the shaders. This is normal and will only happen the first time you run the application or if the cache has been cleared. This only happens on Linux. You can run `gsettings set org.gnome.mutter check-alive-timeout 60000` to avoid getting the popup.
 
 ### App Dependencies
 

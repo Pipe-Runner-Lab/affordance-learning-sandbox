@@ -1,13 +1,12 @@
+import torch
 from omni.isaac.core.utils.extensions import enable_extension
+from ..franka_cabinet_drawer_top_open.task import (
+    CustomTask as BaseTask,
+)
+from ...utils.transforms_utils import compute_grasp_transforms
 
 enable_extension("omni.replicator.isaac")  # required by OIGE
 enable_extension("omni.kit.window.viewport")  # required by OIGE
-
-import torch  # noqa
-from ..franka_cabinet_drawer_top_open.task import (  # noqa
-    CustomTask as BaseTask,
-)
-from ...utils.transforms_utils import compute_grasp_transforms  # noqa
 
 
 class CustomTask(BaseTask):

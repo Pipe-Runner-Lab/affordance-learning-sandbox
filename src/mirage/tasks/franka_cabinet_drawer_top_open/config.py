@@ -107,3 +107,5 @@ TASK_CFG = {
         },
     },
 }
+
+JOINT_INDEX = 3

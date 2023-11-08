@@ -1,22 +1,21 @@
+import torch
 from omni.isaac.core.utils.extensions import enable_extension
-
-enable_extension("omni.replicator.isaac")  # required by OIGE
-enable_extension("omni.kit.window.viewport")  # required by OIGE
-
-import torch  # noqa: E402
-import numpy as np  # noqa: E402
-from omni.isaac.core.utils.stage import get_current_stage  # noqa: E402
-from ...asset_helpers.asset_loader import (  # noqa: E402
+import numpy as np
+from omni.isaac.core.utils.stage import get_current_stage
+from omniisaacgymenvs.tasks.base.rl_task import RLTask
+from .config import JOINT_INDEX
+from ...asset_helpers.asset_loader import (
     spawn_cabinet,
     spawn_robot,
 )
-from ...utils.transforms_utils import (  # noqa: E402
+from ...utils.transforms_utils import (
     compute_grasp_transforms,
     get_robot_local_grasp_transforms,
 )
-from .reward import compute_open_drawer_reward  # noqa: E402
-from omniisaacgymenvs.tasks.base.rl_task import RLTask  # noqa: E402
+from .reward import compute_open_drawer_reward, TOP_DRAWER_JOINT_ALMOST_OPEN
 
+enable_extension("omni.replicator.isaac")  # required by OIGE
+enable_extension("omni.kit.window.viewport")  # required by OIGE
 
 # provides inverse kinematics utils for cartesian space
 # from skrl.utils import omniverse_isaacgym_utils
@@ -50,10 +49,6 @@ class CustomTask(RLTask):
         self._env_spacing = self._task_cfg["env"]["envSpacing"]
 
         self._max_episode_length = self._task_cfg["env"]["episodeLength"]
-
-        self.top_drawer_joint_threshold = self._task_cfg["env"][
-            "topDrawerJointThreshold"
-        ]
 
         self.action_scale = self._task_cfg["env"]["actionScale"]
         self.dof_vel_scale = self._task_cfg["env"]["dofVelocityScale"]
@@ -256,7 +251,7 @@ class CustomTask(RLTask):
                 dof_pos_scaled,  # size 9
                 dof_vel_scaled,  # size 9
                 to_target,  # size 3
-                cabinet_dof_pos[:, 3].unsqueeze(
+                cabinet_dof_pos[:, JOINT_INDEX].unsqueeze(
                     -1
                 ),  # top drawer joint pos - size 1
                 cabinet_dof_vel[:, 3].unsqueeze(
@@ -277,7 +272,6 @@ class CustomTask(RLTask):
             drawer_grasp_pos,
             drawer_grasp_rot,
         )
-        hand_pos, hand_rot = self._robots._hands.get_world_poses(clone=False)
         (
             self.robot_lfinger_pos,
             self.robot_lfinger_rot,
@@ -317,7 +311,8 @@ class CustomTask(RLTask):
     def is_done(self) -> None:
         # reset if drawer is open or max length reached
         self.reset_buf = torch.where(
-            self.cabinet_dof_pos[:, 3] > self.top_drawer_joint_threshold,
+            self.cabinet_dof_pos[:, JOINT_INDEX]
+            > TOP_DRAWER_JOINT_ALMOST_OPEN,
             torch.ones_like(self.reset_buf),
             self.reset_buf,
         )

@@ -1,24 +1,21 @@
+import torch
+import numpy as np
 from omni.isaac.core.utils.extensions import enable_extension
-
-enable_extension("omni.replicator.isaac")  # required by OIGE
-enable_extension("omni.kit.window.viewport")  # required by OIGE
-
-import torch  # noqa: E402
-import numpy as np  # noqa: E402
-from omniisaacgymenvs.tasks.base.rl_task import RLTask  # noqa: E402
-from omni.isaac.core.utils.stage import get_current_stage  # noqa: E402
-from ...asset_helpers.asset_loader import (  # noqa: E402
+from omniisaacgymenvs.tasks.base.rl_task import RLTask
+from omni.isaac.core.utils.stage import get_current_stage
+from ...asset_helpers.asset_loader import (
     spawn_cabinet,
     spawn_robot,
 )
-from ...utils.transforms_utils import (  # noqa: E402
+from ...utils.transforms_utils import (
     compute_grasp_transforms,
     get_robot_local_grasp_transforms,
 )
-from ..franka_cabinet_drawer_1_open.reward import (
-    compute_open_drawer_reward,
-)  # noqa: E402
-from ...asset_helpers.custom_view import LidarView  # noqa: E402
+from ..franka_cabinet_drawer_top_open.reward import compute_open_drawer_reward
+from ...asset_helpers.custom_view import LidarView
+
+enable_extension("omni.replicator.isaac")  # required by OIGE
+enable_extension("omni.kit.window.viewport")  # required by OIGE
 
 
 class FrankaCabinetLidarTask(RLTask):
@@ -43,7 +40,7 @@ class FrankaCabinetLidarTask(RLTask):
 
         self._max_episode_length = self._task_cfg["env"]["episodeLength"]
 
-        self.top_drawer_joint_threshold = self._task_cfg["env"][
+        self.TOP_DRAWER_JOINT_ALMOST_OPEN = self._task_cfg["env"][
             "topDrawerJointThreshold"
         ]
 
@@ -329,7 +326,7 @@ class FrankaCabinetLidarTask(RLTask):
     def is_done(self) -> None:
         # reset if drawer is open or max length reached
         self.reset_buf = torch.where(
-            self.cabinet_dof_pos[:, 3] > self.top_drawer_joint_threshold,
+            self.cabinet_dof_pos[:, 3] > self.TOP_DRAWER_JOINT_ALMOST_OPEN,
             torch.ones_like(self.reset_buf),
             self.reset_buf,
         )
