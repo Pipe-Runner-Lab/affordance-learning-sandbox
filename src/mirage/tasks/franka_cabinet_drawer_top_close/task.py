@@ -5,7 +5,7 @@ from ..franka_cabinet_drawer_top_open.task import (
 )
 from .reward import compute_close_drawer_reward
 from .config import JOINT_INDEX
-from .reward import TOP_DRAWER_ALMOST_CLOSED, TOP_DRAWER_JOINT_ALMOST_OPEN
+from .reward import TOP_DRAWER_CLOSED, TOP_DRAWER_JOINT_ALMOST_OPEN
 
 enable_extension("omni.replicator.isaac")  # required by OIGE
 enable_extension("omni.kit.window.viewport")  # required by OIGE
@@ -15,7 +15,7 @@ class CustomTask(BaseTask):
     def is_done(self) -> None:
         # reset if drawer is open or max length reached
         self.reset_buf = torch.where(
-            self.cabinet_dof_pos[:, JOINT_INDEX] < TOP_DRAWER_ALMOST_CLOSED,
+            self.cabinet_dof_pos[:, JOINT_INDEX] < TOP_DRAWER_CLOSED,
             torch.ones_like(self.reset_buf),
             self.reset_buf,
         )

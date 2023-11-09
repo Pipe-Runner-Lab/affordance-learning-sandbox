@@ -4,9 +4,10 @@ from omni.isaac.core.utils.torch.transformations import (
 )
 from .config import JOINT_INDEX
 
-LEFT_DOOR_JOINT_ALMOST_OPEN = -1.1  # almost open
+LEFT_DOOR_JOINT_ALMOST_OPEN = -1.05  # almost open
 LEFT_DOOR_JOINT_PARTIALLY_OPEN = -0.6  # partially open
-LEFT_DOOR_ALMOST_CLOSED = -0.01  # closed
+LEFT_DOOR_ALMOST_CLOSED = -0.05  # almost closed
+LEFT_DOOR_CLOSED = -0.01  # closed
 
 
 def compute_close_door_left_reward(

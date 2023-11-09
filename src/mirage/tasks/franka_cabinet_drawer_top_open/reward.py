@@ -4,7 +4,8 @@ from omni.isaac.core.utils.torch.transformations import (
 )
 from .config import JOINT_INDEX
 
-TOP_DRAWER_JOINT_ALMOST_OPEN = 0.39  # almost open
+TOP_DRAWER_JOINT_OPEN = 0.35
+TOP_DRAWER_JOINT_ALMOST_OPEN = 0.3  # almost open
 TOP_DRAWER_JOINT_PARTIALLY_OPEN = 0.2  # partially open
 TOP_DRAWER_ALMOST_CLOSED = 0.01  # closed
 

@@ -8,7 +8,7 @@ from skrl.utils.omniverse_isaacgym_utils import get_env_instance
 from skrl.envs.torch import wrap_env
 from skrl.utils import set_seed
 from ..models.ppo import Policy, Value
-from ..tasks.franka_cabinet_door_left_close.config import TASK_CFG
+from ..tasks.franka_cabinet_door_left_open.config import TASK_CFG
 
 # set the seed for reproducibility
 set_seed(TASK_CFG["seed"])
@@ -17,7 +17,7 @@ set_seed(TASK_CFG["seed"])
 env = get_env_instance(headless=TASK_CFG["headless"])
 
 from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig  # noqa
-from ..tasks.franka_cabinet_door_left_close.task import (  # noqa
+from ..tasks.franka_cabinet_door_left_open.task import (  # noqa
     CustomTask,
 )
 
@@ -85,6 +85,12 @@ cfg_ppo["value_preprocessor_kwargs"] = {"size": 1, "device": device}
 cfg_ppo["experiment"]["write_interval"] = 32
 cfg_ppo["experiment"]["checkpoint_interval"] = 250
 
+# logging to Weights & Biases
+# cfg_ppo["experiment"]["wandb"] = True
+# cfg_ppo["experiment"]["wandb_kwargs"] = {
+#     "project": "Affordance Learning",
+# }
+
 agent = PPO(
     models=models_ppo,
     memory=memory,
@@ -96,7 +102,7 @@ agent = PPO(
 
 
 # Configure and instantiate the RL trainer
-cfg_trainer = {"timesteps": 5000}
+cfg_trainer = {"timesteps": 6000}
 trainer = SequentialTrainer(cfg=cfg_trainer, env=env, agents=agent)
 
 # start training

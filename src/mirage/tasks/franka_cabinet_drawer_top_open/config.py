@@ -5,7 +5,7 @@ TASK_CFG = {
     "sim_device": "gpu",
     "enable_livestream": False,
     "warp": False,
-    "seed": 0,
+    "seed": 10,
     "task": {
         "name": "AffordanceBlockPickPlace",
         "physics_engine": "physx",
