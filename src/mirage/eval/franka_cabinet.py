@@ -3,10 +3,10 @@ from skrl.resources.preprocessors.torch import RunningStandardScaler
 from skrl.trainers.torch import SequentialTrainer
 from skrl.utils.omniverse_isaacgym_utils import get_env_instance
 from skrl.envs.torch import wrap_env
-from ..tasks.franka_cabinet_door_left_open.config import TASK_CFG
+from ..tasks.franka_cabinet_door_right_open.config import TASK_CFG
 from ..models.ppo import Policy
 
-CHECKPOINT_PATH = "runs/23-11-09_01-27-40-714387_PPO/checkpoints/best_agent.pt"
+CHECKPOINT_PATH = "runs/23-11-11_11-01-14-434677_PPO/checkpoints/best_agent.pt"
 
 TASK_CFG["task"]["env"]["numEnvs"] = 64
 TASK_CFG["headless"] = False
@@ -17,7 +17,7 @@ env = get_env_instance(
 )  # both this and config needs to be headless
 
 from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig  # noqa
-from ..tasks.franka_cabinet_door_left_open.task import (  # noqa: E402
+from ..tasks.franka_cabinet_door_right_open.task import (  # noqa: E402
     CustomTask,
 )
 

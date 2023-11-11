@@ -62,7 +62,8 @@ def get_robot_local_grasp_transforms(
 
 
 def get_env_local_pose(env_pos, xformable, device):
-    """Compute pose in env-local coordinates by subtracting env_pos from world_pos"""
+    """Compute pose in env-local coordinates by subtracting env_pos from
+    world_pos"""
     # env_pos here is only for one env, not all envs
     # https://docs.omniverse.nvidia.com/dev-guide/latest/programmer_ref/usd/transforms/get-world-transforms.html#get-the-world-space-transforms-for-a-prim
     world_transform = xformable.ComputeLocalToWorldTransform(0)

@@ -4,13 +4,13 @@ from omni.isaac.core.utils.torch.transformations import (
 )
 from .config import JOINT_INDEX
 
-LEFT_DOOR_JOINT_ALMOST_OPEN = -0.8  # almost open
-LEFT_DOOR_JOINT_PARTIALLY_OPEN = -0.6  # partially open
-LEFT_DOOR_ALMOST_CLOSED = -0.3  # almost closed
-LEFT_DOOR_CLOSED = -0.01  # closed
+RIGHT_DOOR_JOINT_ALMOST_OPEN = 0.9  # almost open
+RIGHT_DOOR_JOINT_PARTIALLY_OPEN = 0.6  # partially open
+RIGHT_DOOR_ALMOST_CLOSED = 0.05  # almost closed
+RIGHT_DOOR_CLOSED = 0.01  # closed
 
 
-def compute_open_door_left_reward(
+def compute_open_door_right_reward(
     # entities
     actions,
     robot_dof_pos,
@@ -62,7 +62,7 @@ def compute_open_door_left_reward(
         torch.sign(dot1) * dot1**2 + torch.sign(dot2) * dot2**2
     )
 
-    # bonus if left finger is above the door handle and right below
+    # bonus if right finger is above the door handle and right below
     around_handle_reward = torch.zeros_like(rot_reward)
     around_handle_reward = torch.where(
         robot_lfinger_pos[:, 2] > door_grasp_pos[:, 2],  # z axis comparison
@@ -99,8 +99,8 @@ def compute_open_door_left_reward(
 
     # how far the cabinet has been opened out
     open_reward = (
-        -cabinet_dof_pos[:, JOINT_INDEX] * around_handle_reward
-        + -cabinet_dof_pos[:, JOINT_INDEX]
+        cabinet_dof_pos[:, JOINT_INDEX] * around_handle_reward
+        + cabinet_dof_pos[:, JOINT_INDEX]
     )  # door_top_joint
 
     rewards = (
@@ -115,17 +115,17 @@ def compute_open_door_left_reward(
 
     # bonus for opening door properly
     rewards = torch.where(
-        cabinet_dof_pos[:, JOINT_INDEX] < LEFT_DOOR_CLOSED,
+        cabinet_dof_pos[:, JOINT_INDEX] > RIGHT_DOOR_CLOSED,
         rewards + 0.5,
         rewards,
     )
     rewards = torch.where(
-        cabinet_dof_pos[:, JOINT_INDEX] < LEFT_DOOR_ALMOST_CLOSED,
+        cabinet_dof_pos[:, JOINT_INDEX] > RIGHT_DOOR_ALMOST_CLOSED,
         rewards + around_handle_reward,
         rewards,
     )
     rewards = torch.where(
-        cabinet_dof_pos[:, JOINT_INDEX] < LEFT_DOOR_JOINT_PARTIALLY_OPEN,
+        cabinet_dof_pos[:, JOINT_INDEX] > RIGHT_DOOR_JOINT_PARTIALLY_OPEN,
         rewards + (2.0 * around_handle_reward),
         rewards,
     )

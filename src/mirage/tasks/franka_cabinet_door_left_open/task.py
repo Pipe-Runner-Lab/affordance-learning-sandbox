@@ -143,7 +143,7 @@ class CustomTask(BaseTask):
     def is_done(self) -> None:
         # reset if door is open or max length reached
         self.reset_buf = torch.where(
-            self.cabinet_dof_pos[:, 0] < LEFT_DOOR_JOINT_ALMOST_OPEN,
+            self.cabinet_dof_pos[:, JOINT_INDEX] < LEFT_DOOR_JOINT_ALMOST_OPEN,
             torch.ones_like(self.reset_buf),
             self.reset_buf,
         )
