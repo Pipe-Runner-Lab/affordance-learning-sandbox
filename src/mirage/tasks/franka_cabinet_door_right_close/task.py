@@ -5,13 +5,13 @@ from ..franka_cabinet_drawer_top_open.task import (
     CustomTask as BaseTask,
 )
 from omni.isaac.core.utils.stage import get_current_stage
-from .reward import compute_close_door_left_reward
+from .reward import compute_close_door_right_reward
 from ...utils.transforms_utils import (
     compute_grasp_transforms,
     get_robot_local_grasp_transforms,
 )
 from .config import JOINT_INDEX
-from .reward import LEFT_DOOR_CLOSED, LEFT_DOOR_JOINT_ALMOST_OPEN
+from .reward import RIGHT_DOOR_CLOSED, RIGHT_DOOR_JOINT_ALMOST_OPEN
 
 enable_extension("omni.replicator.isaac")  # required by OIGE
 enable_extension("omni.kit.window.viewport")  # required by OIGE
@@ -27,7 +27,7 @@ class CustomTask(BaseTask):
 
         # * Expected grasp pose franka to open the door
         door_local_grasp_pose = torch.tensor(
-            [0.019, 0.31, 0.23, 1.0, 0.0, 0.0, 0.0], device=self._device
+            [0.019, -0.31, 0.23, 1.0, 0.0, 0.0, 0.0], device=self._device
         )
         self.door_local_grasp_pos = door_local_grasp_pose[0:3].repeat(
             (self._num_envs, 1)
@@ -143,7 +143,7 @@ class CustomTask(BaseTask):
     def is_done(self) -> None:
         # reset if door is open or max length reached
         self.reset_buf = torch.where(
-            self.cabinet_dof_pos[:, JOINT_INDEX] > LEFT_DOOR_CLOSED,
+            self.cabinet_dof_pos[:, JOINT_INDEX] < RIGHT_DOOR_CLOSED,
             torch.ones_like(self.reset_buf),
             self.reset_buf,
         )
@@ -189,7 +189,7 @@ class CustomTask(BaseTask):
         default_cabinet_dof_pos = torch.zeros_like(
             self._cabinets.get_joint_positions(clone=False)[env_ids]
         )
-        default_cabinet_dof_pos[:, JOINT_INDEX] = LEFT_DOOR_JOINT_ALMOST_OPEN
+        default_cabinet_dof_pos[:, JOINT_INDEX] = RIGHT_DOOR_JOINT_ALMOST_OPEN
         self._cabinets.set_joint_positions(
             default_cabinet_dof_pos,
             indices=indices,
@@ -207,7 +207,7 @@ class CustomTask(BaseTask):
         self.progress_buf[env_ids] = 0
 
     def calculate_metrics(self) -> None:
-        self.rew_buf[:] = compute_close_door_left_reward(
+        self.rew_buf[:] = compute_close_door_right_reward(
             self.actions,
             self.robot_dof_pos,
             self.cabinet_dof_pos,

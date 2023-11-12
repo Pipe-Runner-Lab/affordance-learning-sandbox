@@ -8,7 +8,7 @@ from skrl.utils.omniverse_isaacgym_utils import get_env_instance
 from skrl.envs.torch import wrap_env
 from skrl.utils import set_seed
 from ..models.ppo import Policy, Value
-from ..tasks.franka_cabinet_door_right_open.config import TASK_CFG
+from ..tasks.franka_cabinet_door_right_close.config import TASK_CFG
 
 # set the seed for reproducibility
 set_seed(TASK_CFG["seed"])
@@ -17,7 +17,7 @@ set_seed(TASK_CFG["seed"])
 env = get_env_instance(headless=TASK_CFG["headless"])
 
 from omniisaacgymenvs.utils.config_utils.sim_config import SimConfig  # noqa
-from ..tasks.franka_cabinet_door_right_open.task import (  # noqa
+from ..tasks.franka_cabinet_door_right_close.task import (  # noqa
     CustomTask,
 )
 
