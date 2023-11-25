@@ -1,7 +1,8 @@
+% Author - Jon Arnt Kårstad, NTNU IV-IMT
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{packages}[2021/04/20 Packages]
 \usepackage[utf8]{inputenc} % Character encoding
-\usepackage[T1]{fontenc}    % Font encoding
 
 % ------ Contents -------
 % Appendices
@@ -19,27 +20,27 @@
 % -----------------------
 
 % --- Appendices ---
-% \usepackage{appendix}
-% \newcommand{\addappendix}{   % Self-created command to insert appendix with predefined settings
-%     \newpage
-%     \appendix
-%     \section*{Appendix}   % Name of appendix
-%     \addcontentsline{toc}{section}{Appendix}  % Add appendix name to table of contents
-%     \renewcommand{\thesubsection}{\Alph{subsection}}    % Change numbering of section to upper-case letters.
-% }
+\usepackage{appendix}
+\newcommand{\addappendix}{   % Self-created command to insert appendix with predefined settings
+    \newpage
+    \appendix
+    \section*{Appendix}   % Name of appendix
+    \addcontentsline{toc}{section}{Appendix}  % Add appendix name to table of contents
+    \renewcommand{\thesubsection}{\Alph{subsection}}    % Change numbering of section to upper-case letters.
+}
 
 % --- Bibliography & References---  
-% \usepackage[backend = biber,    % Recommended backend for sorting bibliography
-%     style = authoryear-comp,    % Close to the 'Harvard' referencing style
-%     urldate = long,     % Long: 24th Mar. 1997 | Short: 24/03/1997
-%     maxcitenames = 2,   % Number of authors in cite before replaced with 'Author#1 et al.'
-% ]{biblatex}
-% \addbibresource{references.bib}     % Adding our file containing the references
+\usepackage[backend = biber,    % Recommended backend for sorting bibliography
+            style = authoryear-comp,    % Close to the 'Harvard' referencing style
+            urldate = long,     % Long: 24th Mar. 1997 | Short: 24/03/1997
+            maxcitenames = 2,   % Number of authors in cite before replaced with 'Author#1 et al.'
+            ]{biblatex}
+\addbibresource{references.bib}     % Adding our file containing the references
 % \addbibresource{reference_2.bib} is possible if we want to add several reference files
 
 \usepackage{caption}        % Enables controlling the look and feel of captions, see package documentation
 \usepackage{subcaption}     % Recommended when making sub-figures
-% \usepackage[nottoc]{tocbibind}  % Includes Bibliography, Index, list of Listing etc. to table of contents
+\usepackage[nottoc]{tocbibind}  % Includes Bibliography, Index, list of Listing etc. to table of contents
 \newcommand{\source}[1]{\vspace{-4pt} \caption*{\hfill \footnotesize{Source: {#1}} } }   % Easily insert sources in images
 
 % --- Code ---
@@ -52,13 +53,13 @@
 % Keep in mind that you may customize these flow chart settings to fit your own preferences.
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
-\tikzstyle{decision} = [diamond, draw, fill=blue!20,
-text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
-\tikzstyle{block} = [rectangle, draw, fill=blue!20,
-text width=5em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=5em, text centered, rounded corners, minimum height=4em]
 \tikzstyle{line} = [draw, -latex']
 \tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm,
-minimum height=2em]
+    minimum height=2em]
 
 % --- Front matter ---
 % Front matter is located before the table of contents, e.g. preface (Norsk: forord) and often has separate settings
@@ -114,20 +115,20 @@ minimum height=2em]
 \usepackage{bm}         % Bold text in math mode
 \usepackage{amsmath}    % Math formulas and improved typographical quality of their output
 \usepackage{amssymb}    % Extended symbol collection
-% \usepackage{amsthm}     % Helps define theorem-like structures
+\usepackage{amsthm}     % Helps define theorem-like structures
 \usepackage{textcomp}   % Used in the package "gensymb" (below), which will give warnings if "textcomp" is not imported in advance
 \usepackage{gensymb}    % Adds extra generic symbols for math and text mode, e.g. \degree
 
 
 % --- Page setup ---
-% \usepackage[a4paper, total={150mm, 245mm,footskip = 14mm}]{geometry}
-% \setlength{\parindent}{0em}
-% \setlength{\parskip}{0.8em}
+\usepackage[a4paper, total={150mm, 245mm,footskip = 14mm}]{geometry}
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.8em}
 
 % Customized header and footer
-% \usepackage{fancyhdr}
-% \pagestyle{fancy}
-% \fancyhf{}
-% \renewcommand{\headrulewidth}{0.1ex}
-% \renewcommand{\footrulewidth}{0.1ex}
-% \fancyfoot[C]{\thepage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.1ex}
+\renewcommand{\footrulewidth}{0.1ex}
+\fancyfoot[C]{\thepage}
