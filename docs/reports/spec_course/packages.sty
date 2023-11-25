@@ -1,5 +1,3 @@
-% Author - Jon Arnt Kårstad, NTNU IV-IMT
-
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{packages}[2021/04/20 Packages]
 \usepackage[utf8]{inputenc} % Character encoding
@@ -21,14 +19,14 @@
 % -----------------------
 
 % --- Appendices ---
-\usepackage{appendix}
-\newcommand{\addappendix}{   % Self-created command to insert appendix with predefined settings
-    \newpage
-    \appendix
-    \section*{Appendix}   % Name of appendix
-    \addcontentsline{toc}{section}{Appendix}  % Add appendix name to table of contents
-    \renewcommand{\thesubsection}{\Alph{subsection}}    % Change numbering of section to upper-case letters.
-}
+% \usepackage{appendix}
+% \newcommand{\addappendix}{   % Self-created command to insert appendix with predefined settings
+%     \newpage
+%     \appendix
+%     \section*{Appendix}   % Name of appendix
+%     \addcontentsline{toc}{section}{Appendix}  % Add appendix name to table of contents
+%     \renewcommand{\thesubsection}{\Alph{subsection}}    % Change numbering of section to upper-case letters.
+% }
 
 % --- Bibliography & References---  
 % \usepackage[backend = biber,    % Recommended backend for sorting bibliography
@@ -116,7 +114,7 @@ minimum height=2em]
 \usepackage{bm}         % Bold text in math mode
 \usepackage{amsmath}    % Math formulas and improved typographical quality of their output
 \usepackage{amssymb}    % Extended symbol collection
-\usepackage{amsthm}     % Helps define theorem-like structures
+% \usepackage{amsthm}     % Helps define theorem-like structures
 \usepackage{textcomp}   % Used in the package "gensymb" (below), which will give warnings if "textcomp" is not imported in advance
 \usepackage{gensymb}    % Adds extra generic symbols for math and text mode, e.g. \degree
 

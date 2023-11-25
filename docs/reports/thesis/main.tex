@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 % Author - Aakash S. Mallik, NTNU IIR
+=======
+% Author - Jon Arnt Kårstad, NTNU IMT
+>>>>>>> 00bb62f (IEEE format template added)
 \documentclass{article}
 
 % Importing document settings from our file "packages.sty"
@@ -23,10 +27,22 @@
 % Defining main matter settings (Norsk: innstillinger for hoveddelen av teksten)
 \mainmatter
 
+<<<<<<< HEAD
 % Sections
 \import{./Sections/}{Abstract}
 \import{./Sections/}{Introduction}
 \import{./Sections/}{Theory}
+=======
+% Introduction explaining this LaTeX-template
+\import{./Sections/}{Introduction}
+
+% Example section added from an external tex-file, here located in ./Sections/
+\import{./Sections/}{Example_section}
+
+% Example section added directly into the main-file
+\section{Conclusion}
+\textit{But the fact that some geniuses were laughed at does not imply that all who are laughed at are geniuses. They laughed at Columbus, they laughed at Fulton, they laughed at the Wright Brothers. But they also laughed at Bozo the Clown} -  \textcite{sagan_1993}.
+>>>>>>> 00bb62f (IEEE format template added)
 
 % Printing bibliography
 \newpage
@@ -34,7 +50,11 @@
 
 % Inserting appendix with separate settings
 \addappendix
+<<<<<<< HEAD
 \import{./Appendices/}{Glossary}
+=======
+\import{./Appendices/}{example_appendix}
+>>>>>>> 00bb62f (IEEE format template added)
 
 % End of document
 \end{document}
