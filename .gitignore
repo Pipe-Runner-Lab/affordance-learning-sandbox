@@ -464,3 +464,5 @@ TSWLatexianTemp*
 runs
 
 *tensorboard
+
+data/**/*.*

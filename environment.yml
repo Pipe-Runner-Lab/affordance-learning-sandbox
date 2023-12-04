@@ -12,3 +12,6 @@ dependencies:
       - tensorboard-plugin-wit==1.8.1
       - protobuf==3.20.3
       - torch-tb-profiler==0.4.3
+      - fastparquet==2023.10.1
+      - jupyterlab==4.0.9
+      - plotly==5.18.0
