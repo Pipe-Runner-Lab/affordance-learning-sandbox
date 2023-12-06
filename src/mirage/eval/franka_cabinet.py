@@ -7,7 +7,7 @@ from ..tasks.franka_cabinet_door_left_open.config import TASK_CFG
 from ..models.ppo import Policy
 
 CHECKPOINT_PATH = (
-    "runs/franka_cabinet_door_left_open/checkpoints/best_agent.pt"
+    "assets/best_runs/franka_cabinet_door_left_open/checkpoints/best_agent.pt"
 )
 
 TASK_CFG["task"]["env"]["numEnvs"] = 64
