@@ -1,6 +1,6 @@
 # Affordance Learning Sandbox
 
-- [Project Mirage](#project-mirage)
+- [Report](#report)
 - [🧪 Setup](#-setup)
   - [💻 Device Specifications](#-device-specifications)
   - [🦾 Nvidia Omniverse](#-nvidia-omniverse)
@@ -15,6 +15,10 @@
   - [📂 VS Code](#-vs-code)
 - [⏯️ Starting the Simulation](#️-starting-the-simulation)
 - [📝 FAQ](#-faq)
+
+# 🔬 Report
+The report for this project can be found in this following repository:
+https://github.com/Pipe-Runner-Lab/affordance-learning-sandbox-report
 
 # 🧪 Setup
 
