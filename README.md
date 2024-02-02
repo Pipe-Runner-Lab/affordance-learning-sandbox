@@ -1,6 +1,6 @@
 # Affordance Learning Sandbox
 
-- [Report](#report)
+- [🔬 Report](#-report)
 - [🧪 Setup](#-setup)
   - [💻 Device Specifications](#-device-specifications)
   - [🦾 Nvidia Omniverse](#-nvidia-omniverse)
