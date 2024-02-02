@@ -17,8 +17,7 @@
 - [📝 FAQ](#-faq)
 
 # 🔬 Report
-The report for this project can be found in this following repository:
-https://github.com/Pipe-Runner-Lab/affordance-learning-sandbox-report
+The report for this project can be found [here](https://github.com/Pipe-Runner-Lab/affordance-learning-sandbox-report)
 
 # 🧪 Setup
 
