@@ -1,4 +1,4 @@
-# Project Mirage
+# Affordance Learning Sandbox
 
 - [Project Mirage](#project-mirage)
 - [🧪 Setup](#-setup)
